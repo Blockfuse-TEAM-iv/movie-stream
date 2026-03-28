@@ -9,7 +9,7 @@ HTML · Tailwind CSS (CLI) · Vanilla JavaScript
 npm install
 
 ### 2. Run the Tailwind watcher (keep this terminal open while working)
-npx tailwindcss -i ./css/input.css -o ./css/output.css --watch
+npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch
 
 ### 3. Open with Live Server
 Install the Live Server extension in VS Code.
