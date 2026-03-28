@@ -1,13 +1,86 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieStream - Auth</title>
   <link href="../styles/output.css" rel="stylesheet">
 </head>
-<body>
-  <p class="text-3xl  underline">
-    Hello world!
-  </p>
+<body class="bg-gray-100 p-8">
+
+  <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">MovieStream</h1>
+    
+    <div id="alert" class="hidden mb-4 p-2 border rounded text-sm"></div>
+
+    <!-- Login Form -->
+    <div id="login-section">
+      <h2 class="text-xl mb-4">Sign In</h2>
+      <form id="login-form" class="space-y-4">
+        <input type="email" id="login-email" placeholder="Email" required class="w-full border p-2 rounded">
+        <input type="password" id="login-password" placeholder="Password" required class="w-full border p-2 rounded">
+        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Login</button>
+      </form>
+      <p class="mt-4 text-sm">Don't have an account? <button id="to-register" class="text-blue-500">Register</button></p>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-section" class="hidden">
+      <h2 class="text-xl mb-4">Register</h2>
+      <form id="register-form" class="space-y-4">
+        <input type="text" id="reg-name" placeholder="Full Name" required class="w-full border p-2 rounded">
+        <input type="email" id="reg-email" placeholder="Email" required class="w-full border p-2 rounded">
+        <input type="password" id="reg-password" placeholder="Password" required class="w-full border p-2 rounded">
+        <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Create Account</button>
+      </form>
+      <p class="mt-4 text-sm">Already have an account? <button id="to-login" class="text-blue-500">Login</button></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { registerUser, loginUser } from '../js/auth.js';
+    import { redirectIfLoggedIn } from '../js/router.js';
+
+    redirectIfLoggedIn();
+
+    const loginSection = document.getElementById('login-section');
+    const registerSection = document.getElementById('register-section');
+    const alertBox = document.getElementById('alert');
+
+    function showAlert(msg, type = 'error') {
+      alertBox.textContent = msg;
+      alertBox.className = `p-2 border rounded text-sm mb-4 ${type === 'error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700'}`;
+      alertBox.classList.remove('hidden');
+    }
+
+    document.getElementById('to-register').addEventListener('click', () => {
+      loginSection.classList.add('hidden');
+      registerSection.classList.remove('hidden');
+    });
+
+    document.getElementById('to-login').addEventListener('click', () => {
+      registerSection.classList.add('hidden');
+      loginSection.classList.remove('hidden');
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await loginUser(e.target[0].value, e.target[1].value);
+      if (res.success) window.location.href = './home.html';
+      else showAlert(res.message);
+    });
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await registerUser(e.target[0].value, e.target[1].value, e.target[2].value);
+      if (res.success) {
+        showAlert(res.message, 'success');
+        setTimeout(() => {
+          registerSection.classList.add('hidden');
+          loginSection.classList.remove('hidden');
+        }, 1500);
+      } else showAlert(res.message);
+    });
+  </script>
 </body>
 </html>

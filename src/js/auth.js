@@ -98,11 +98,10 @@ export async function loginUser(email, password) {
 }
 
 /**
- * Logs out the current user.
+ * Logs out the current user by clearing the session.
  */
 export function logoutUser() {
   localStorage.removeItem(STORAGE_KEYS.SESSION);
-  window.location.href = './index.html';
 }
 
 /**
@@ -117,13 +116,3 @@ export function getCurrentUser() {
   return users.find(u => u.id === session.userId) || null;
 }
 
-/**
- * Middleware-like function to protect pages.
- * Redirects to index.html if no session exists.
- */
-export function requireAuth() {
-  const session = localStorage.getItem(STORAGE_KEYS.SESSION);
-  if (!session) {
-    window.location.href = './index.html';
-  }
-}
