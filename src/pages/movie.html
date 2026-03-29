@@ -7,10 +7,26 @@
   <link href="../styles/output.css" rel="stylesheet">
   <script type="module">
     import { requireAuth } from '../js/router.js';
+    import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
+    
     requireAuth();
+    applyTheme();
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      renderNavbar();
+      renderFooter();
+    });
   </script>
 </head>
-<body class="bg-slate-950 text-slate-200">
-  <h1 class="text-2xl p-8">Movie Details (Protected)</h1>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+  <div id="navbar"></div>
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+  
+  <main class="p-8">
+    <h1 class="text-3xl font-bold">Movie Details</h1>
+    <p class="text-slate-400 mt-2">Discover more about your favorite films.</p>
+  </main>
+
+  <div id="footer"></div>
 </body>
 </html>
