@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +9,49 @@
   <script type="module">
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
-    
+    import { initMovieDetails } from '../js/movies.js';
+
+    // Protect page
     requireAuth();
+
+    // Apply shared theme
     applyTheme();
-    
+
     window.addEventListener('DOMContentLoaded', () => {
+      // Render shared UI components
       renderNavbar();
       renderFooter();
+
+      // Initialize movie details logic
+      initMovieDetails();
     });
   </script>
 </head>
+
 <body class="bg-slate-950 text-slate-200 min-h-screen">
+  <!-- Shared UI Portals -->
   <div id="navbar"></div>
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-  
-  <main class="p-8">
-    <h1 class="text-3xl font-bold">Movie Details</h1>
-    <p class="text-slate-400 mt-2">Discover more about your favorite films.</p>
+
+  <!-- Main Content Container Holder -->
+  <main id="movie-content" class="max-w-6xl mx-auto p-8 pt-24">
+    <!-- Loading skeleton -->
+    <div class="animate-pulse flex space-x-4">
+      <div class="flex-1 space-y-6 py-1">
+        <div class="h-2 bg-slate-700 rounded"></div>
+        <div class="space-y-3">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="h-2 bg-slate-700 rounded col-span-2"></div>
+            <div class="h-2 bg-slate-700 rounded col-span-1"></div>
+          </div>
+          <div class="h-2 bg-slate-700 rounded"></div>
+        </div>
+      </div>
+    </div>
   </main>
 
+  <!-- Shared Footer Portal -->
   <div id="footer"></div>
 </body>
+
 </html>
