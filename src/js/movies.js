@@ -204,8 +204,8 @@ function updateWatchlistUI(isSaved) {
  */
 function showNotification(message) {
   // Check if teammate has implemented showToast in ui.js
-  if (window.UI && typeof window.UI.showToast === 'function') {
-    window.UI.showToast(message);
+  if (typeof showToast === 'function') {
+    showToast(message);
   } else {
     console.info(`[Watchlist]: ${message}`);
   }
