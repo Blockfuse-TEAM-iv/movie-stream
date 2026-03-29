@@ -1,36 +1,38 @@
 /**
  * Movie details logic for the Movie Streaming App.
  */
+import { getCurrentUser } from './auth.js';
 
 /**
  * Entry point for the movie details page.
  */
 export async function initMovieDetails() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = parseInt(urlParams.get('id'));
+  const urlParams = new URLSearchParams(window.location.search);
+  const movieId = parseInt(urlParams.get('id'));
 
-    if (!movieId) {
-        window.location.href = './404.html';
-        return;
+  if (!movieId) {
+    window.location.href = './404.html';
+    return;
+  }
+
+  try {
+    const response = await fetch('../data/movies.json');
+    if (!response.ok) throw new Error('Failed to fetch movies');
+
+    const movies = await response.json();
+    const movie = movies.find(m => m.id === movieId);
+
+    if (!movie) {
+      window.location.href = './404.html';
+      return;
     }
 
-    try {
-        const response = await fetch('../data/movies.json');
-        if (!response.ok) throw new Error('Failed to fetch movies');
-
-        const movies = await response.json();
-        const movie = movies.find(m => m.id === movieId);
-
-        if (!movie) {
-            window.location.href = './404.html';
-            return;
-        }
-
-        renderMovieDetails(movie);
-    } catch (error) {
-        console.error('Error loading movie details:', error);
-        // Optionally show an error message on the page
-    }
+    renderMovieDetails(movie);
+    initWatchlist(movieId);
+  } catch (error) {
+    console.error('Error loading movie details:', error);
+    // Optionally show an error message on the page
+  }
 }
 
 /**
@@ -38,10 +40,10 @@ export async function initMovieDetails() {
  * @param {object} movie 
  */
 function renderMovieDetails(movie) {
-    const container = document.getElementById('movie-content');
-    if (!container) return;
+  const container = document.getElementById('movie-content');
+  if (!container) return;
 
-    container.innerHTML = `
+  container.innerHTML = `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
       <!-- Left: Poster -->
       <div class="md:col-span-1">
@@ -86,7 +88,16 @@ function renderMovieDetails(movie) {
 
         <!-- Video Player Placeholder (Person D) -->
         <div class="mt-8 space-y-4">
-          <h2 class="text-xl font-bold text-blue-400">Watch Now</h2>
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold text-blue-400">Watch Now</h2>
+            <!-- Watchlist Toggle Button (#10) -->
+            <button id="watchlist-btn" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition-all duration-300 group">
+              <svg id="watchlist-icon" class="w-5 h-5 transition-colors stroke-slate-400 fill-none group-hover:stroke-white" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span id="watchlist-text" class="text-sm font-medium text-slate-300 group-hover:text-white">Add to Watchlist</span>
+            </button>
+          </div>
           <div id="video-player-root" class="bg-black aspect-video rounded-xl border border-slate-800 flex items-center justify-center group overflow-hidden relative">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
             <div class="z-10 text-center">
@@ -100,4 +111,102 @@ function renderMovieDetails(movie) {
       </div>
     </div>
   `;
+}
+
+/**
+ * Initializes the watchlist button state and event listener.
+ * @param {number} movieId 
+ */
+function initWatchlist(movieId) {
+  const btn = document.getElementById('watchlist-btn');
+  if (!btn) return;
+
+  const user = getCurrentUser();
+  if (!user) return;
+
+  // Check initial state
+  const isSaved = user.watchlist?.includes(movieId) || false;
+  updateWatchlistUI(isSaved);
+
+  btn.addEventListener('click', () => toggleWatchlist(movieId));
+}
+
+/**
+ * Logic to save or remove movie from local storage.
+ * @param {number} movieId 
+ */
+async function toggleWatchlist(movieId) {
+  const session = JSON.parse(localStorage.getItem('movie_stream_session'));
+  if (!session) return;
+
+  const users = JSON.parse(localStorage.getItem('movie_stream_users') || '[]');
+  const userIdx = users.findIndex(u => u.id === session.userId);
+
+  if (userIdx === -1) return;
+
+  const user = users[userIdx];
+
+  // Safety check: ensure watchlist array exists
+  if (!user.watchlist) user.watchlist = [];
+
+  const isCurrentlySaved = user.watchlist.includes(movieId);
+  let isNowSaved = false;
+
+  if (isCurrentlySaved) {
+    // Remove from list
+    user.watchlist = user.watchlist.filter(id => id !== movieId);
+    showNotification('Removed from watchlist');
+  } else {
+    // Add to list (duplicate prevention)
+    if (!user.watchlist.includes(movieId)) {
+      user.watchlist.push(movieId);
+      isNowSaved = true;
+      showNotification('Added to watchlist');
+    }
+  }
+
+  // Persist to local storage
+  users[userIdx] = user;
+  localStorage.setItem('movie_stream_users', JSON.stringify(users));
+
+  // Update UI
+  updateWatchlistUI(isCurrentlySaved ? false : true);
+}
+
+/**
+ * Visual updates for the heart button.
+ * @param {boolean} isSaved 
+ */
+function updateWatchlistUI(isSaved) {
+  const btn = document.getElementById('watchlist-btn');
+  const icon = document.getElementById('watchlist-icon');
+  const text = document.getElementById('watchlist-text');
+  if (!btn || !icon || !text) return;
+
+  if (isSaved) {
+    btn.classList.add('border-pink-500/50', 'bg-pink-500/10');
+    icon.classList.remove('stroke-slate-400', 'fill-none');
+    icon.classList.add('stroke-pink-500', 'fill-pink-500');
+    text.textContent = 'In Watchlist';
+    text.classList.add('text-pink-100');
+  } else {
+    btn.classList.remove('border-pink-500/50', 'bg-pink-500/10');
+    icon.classList.remove('stroke-pink-500', 'fill-pink-500');
+    icon.classList.add('stroke-slate-400', 'fill-none');
+    text.textContent = 'Add to Watchlist';
+    text.classList.remove('text-pink-100');
+  }
+}
+
+/**
+ * Decoupled notification wrapper (Safe fallback for #5).
+ * @param {string} message 
+ */
+function showNotification(message) {
+  // Check if teammate has implemented showToast in ui.js
+  if (window.UI && typeof window.UI.showToast === 'function') {
+    window.UI.showToast(message);
+  } else {
+    console.info(`[Watchlist]: ${message}`);
+  }
 }
