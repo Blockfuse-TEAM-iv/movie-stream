@@ -10,30 +10,24 @@
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
 
-    //  Protect page (must be logged in)
     requireAuth();
-
-    //  Apply saved theme
     applyTheme();
 
-    // Run after page loads
     window.addEventListener('DOMContentLoaded', () => {
-      renderNavbar();   // Inject navbar
-      renderFooter();   // Inject footer
-      loadMovies();     // Load movies
+      renderNavbar();  
+      renderFooter();  
+      loadMovies();
     });
 
     //  Fetch and render movies
     async function loadMovies() {
       try {
-        // 📡 Fetch movie data
         const res = await fetch('../data/movies.json');
         const movies = await res.json();
 
         const movieGrid = document.getElementById('movie-grid');
         const emptyState = document.getElementById('empty-state');
 
-        //  Handle empty state
         if (!movies || movies.length === 0) {
           emptyState.classList.remove('hidden');
           return;
@@ -74,7 +68,6 @@
         `).join('');
 
       } catch (err) {
-        //  Error fallback
         console.error('Failed to load movies:', err);
         document.getElementById('empty-state').classList.remove('hidden');
       }
