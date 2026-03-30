@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +9,37 @@
   <script type="module">
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
-    
+    import { renderContinueWatching, renderAllMovies } from '../js/movies.js';
+
     requireAuth();
     applyTheme();
-    
-    window.addEventListener('DOMContentLoaded', () => {
+
+    window.addEventListener('DOMContentLoaded', async () => {
       renderNavbar();
       renderFooter();
+
+      // Continue Watching row — hidden until in-progress movies exist (Issue #13)
+      await renderContinueWatching('continue-watching-container');
+
+      // Full movie browse grid
+      await renderAllMovies('all-movies-container');
     });
   </script>
 </head>
+
 <body class="bg-slate-950 text-slate-200 min-h-screen">
   <div id="navbar"></div>
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-  
-  <main class="p-8">
-    <h1 class="text-3xl font-bold">Home Page</h1>
-    <p class="text-slate-400 mt-2">Welcome to MovieStream!</p>
+
+  <main class="pt-24 pb-12">
+    <!-- Continue Watching Row (Issue #13) — hidden by JS until data exists -->
+    <div id="continue-watching-container" class="hidden"></div>
+
+    <!-- All Movies Browse Grid -->
+    <div id="all-movies-container"></div>
   </main>
 
   <div id="footer"></div>
 </body>
+
 </html>
