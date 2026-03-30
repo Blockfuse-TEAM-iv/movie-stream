@@ -86,27 +86,9 @@ function renderMovieDetails(movie) {
           </div>
         </div>
 
-        <!-- Video Player Placeholder (Person D) -->
-        <div class="mt-8 space-y-4">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-blue-400">Watch Now</h2>
-            <!-- Watchlist Toggle Button (#10) -->
-            <button id="watchlist-btn" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition-all duration-300 group">
-              <svg id="watchlist-icon" class="w-5 h-5 transition-colors stroke-slate-400 fill-none group-hover:stroke-white" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              <span id="watchlist-text" class="text-sm font-medium text-slate-300 group-hover:text-white">Add to Watchlist</span>
-            </button>
-          </div>
-          <div id="video-player-root" class="bg-black aspect-video rounded-xl border border-slate-800 flex items-center justify-center group overflow-hidden relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-            <div class="z-10 text-center">
-              <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
-                <svg class="w-8 h-8 text-white fill-current ml-1" viewBox="0 0 20 20"><path d="M5 4v12l10-6z"/></svg>
-              </div>
-              <p class="text-slate-400 text-sm italic">[ Video Player Placeholder - Person D ]</p>
-            </div>
-          </div>
+        <div class="mt-8">
+          <h2 class="text-xl font-bold text-blue-400 mb-4">Streaming info</h2>
+          <p class="text-slate-400">Video player controls and playback are available below.</p>
         </div>
       </div>
     </div>
