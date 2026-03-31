@@ -13,65 +13,135 @@
     requireAuth();
     applyTheme();
 
+    let allMovies = [];
+
     window.addEventListener('DOMContentLoaded', () => {
       renderNavbar();  
       renderFooter();  
       loadMovies();
+      setupFilters();
     });
 
-    //  Fetch and render movies
+    // ===============================
+    // FETCH MOVIES
+    // ===============================
     async function loadMovies() {
       try {
         const res = await fetch('../data/movies.json');
-        const movies = await res.json();
+        allMovies = await res.json();
 
-        const movieGrid = document.getElementById('movie-grid');
-        const emptyState = document.getElementById('empty-state');
-
-        if (!movies || movies.length === 0) {
-          emptyState.classList.remove('hidden');
-          return;
-        } else {
-          emptyState.classList.add('hidden');
-        }
-
-        // Render movie cards
-        movieGrid.innerHTML = movies.map(movie => `
-          <div 
-            class="movie-card bg-gray-900 rounded-md overflow-hidden cursor-pointer hover:scale-105 hover:shadow-xl transition"
-            onclick="location.href='movie.html?id=${movie.id}'"
-          >
-            <!-- Poster -->
-            <img src="${movie.poster}" alt="${movie.title}" class="w-full h-48 object-cover">
-
-            <div class="p-2">
-              <!-- Title + Year -->
-              <h3 class="text-sm font-bold text-white">
-                ${movie.title} (${movie.year})
-              </h3>
-
-              <!-- Rating -->
-              <p class="text-xs text-gray-400">
-                Rating: ${movie.rating}
-              </p>
-
-              <!-- Genre Tags (BLUE THEME) -->
-              <div class="flex flex-wrap gap-1 mt-1">
-                ${movie.genre.map(g => `
-                  <span class="text-xs bg-blue-600 px-2 py-0.5 rounded-full">
-                    ${g}
-                  </span>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-        `).join('');
+        renderMovies(allMovies);
 
       } catch (err) {
         console.error('Failed to load movies:', err);
         document.getElementById('empty-state').classList.remove('hidden');
       }
     }
+
+    // ===============================
+    // RENDER MOVIES
+    // ===============================
+    function renderMovies(movies) {
+      const movieGrid = document.getElementById('movie-grid');
+      const emptyState = document.getElementById('empty-state');
+
+      if (!movies || movies.length === 0) {
+        movieGrid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      movieGrid.innerHTML = movies.map(movie => `
+        <div class="movie-card bg-gray-900 rounded-md overflow-hidden transition hover:shadow-lg cursor-pointer" 
+             onclick="window.location.href='movie.html?id=${movie.id}'">
+          
+          <!-- Poster -->
+          <img src="${movie.poster}" alt="${movie.title}" 
+               class="w-full h-48 object-cover">
+
+          <div class="p-3 space-y-1">
+            <!-- Title -->
+            <h3 class="text-sm font-bold text-white truncate">
+              ${movie.title} (${movie.year})
+            </h3>
+
+            <!-- Rating -->
+            <p class="text-xs text-gray-400">
+              ⭐ ${movie.rating}
+            </p>
+
+            <!-- Genres -->
+            <div class="flex flex-wrap gap-1 mt-1">
+              ${movie.genre.map(g => `
+                <span class="text-xs bg-blue-600 px-2 py-0.5 rounded-full">
+                  ${g}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+        </div>
+      `).join('');
+    }
+
+    // ===============================
+    // FILTERS (SEARCH + GENRE)
+    // ===============================
+    function setupFilters() {
+      const searchInput = document.getElementById('movie-search');
+      const genreButtons = document.querySelectorAll('.genre-btn');
+
+      let activeGenre = "All";
+
+      // SEARCH
+      searchInput.addEventListener('input', () => {
+        applyFilters(searchInput.value, activeGenre);
+      });
+
+      // GENRE CLICK
+      genreButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+
+          // UI active state
+          genreButtons.forEach(b => {
+            b.classList.remove('bg-blue-600', 'text-white');
+            b.classList.add('bg-gray-900', 'text-gray-400');
+          });
+
+          btn.classList.add('bg-blue-600', 'text-white');
+          btn.classList.remove('bg-gray-900', 'text-gray-400');
+
+          activeGenre = btn.textContent.trim();
+          applyFilters(searchInput.value, activeGenre);
+        });
+      });
+    }
+
+    // ===============================
+    // APPLY FILTER LOGIC
+    // ===============================
+    function applyFilters(searchText, genre) {
+      let filtered = [...allMovies];
+
+      // SEARCH FILTER
+      if (searchText) {
+        filtered = filtered.filter(movie =>
+          movie.title.toLowerCase().includes(searchText.toLowerCase())
+        );
+      }
+
+      // GENRE FILTER
+      if (genre !== "All") {
+        filtered = filtered.filter(movie =>
+          movie.genre.includes(genre)
+        );
+      }
+
+      renderMovies(filtered);
+    }
+
   </script>
 </head>
 
@@ -80,7 +150,7 @@
   <!-- Navbar -->
   <div id="navbar"></div>
 
-  <!-- Toast container -->
+  <!-- Toast -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
 
   <main class="pt-24 space-y-10">
@@ -97,23 +167,23 @@
 
         <!-- Search -->
         <input id="movie-search" type="text" placeholder="Search movies..." 
-               class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-md focus:border-blue-600 outline-none w-full md:w-80">
+          class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-md focus:border-blue-600 outline-none w-full md:w-80">
 
-        <!-- Genre Buttons -->
-        <div id="genre-container" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 w-full md:w-auto">
-          <button class="genre-btn bg-blue-600 px-4 py-1 rounded-full text-sm">All</button>
-          <button class="genre-btn bg-gray-900 px-4 py-1 rounded-full text-sm text-gray-400 hover:text-white">Action</button>
-          <button class="genre-btn bg-gray-900 px-4 py-1 rounded-full text-sm text-gray-400 hover:text-white">Sci-Fi</button>
-          <button class="genre-btn bg-gray-900 px-4 py-1 rounded-full text-sm text-gray-400 hover:text-white">Drama</button>
+        <!-- Genres -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 w-full md:w-auto">
+          <button class="genre-btn bg-blue-600 text-white px-4 py-1 rounded-full text-sm">All</button>
+          <button class="genre-btn bg-gray-900 text-gray-400 px-4 py-1 rounded-full text-sm">Action</button>
+          <button class="genre-btn bg-gray-900 text-gray-400 px-4 py-1 rounded-full text-sm">Sci-Fi</button>
+          <button class="genre-btn bg-gray-900 text-gray-400 px-4 py-1 rounded-full text-sm">Drama</button>
         </div>
+
       </div>
     </section>
 
-    <!-- Movie Grid -->
+    <!-- Movies -->
     <section class="px-[4%] pb-20">
       <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
 
-      <!-- Empty -->
       <div id="empty-state" class="hidden text-center py-20 text-gray-500">
         No movies found matching your search.
       </div>
@@ -121,7 +191,7 @@
 
   </main>
 
-  <!--Footer -->
+  <!-- Footer -->
   <div id="footer"></div>
 
 </body>
