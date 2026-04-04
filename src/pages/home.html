@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +10,20 @@
   <script type="module">
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
+    import { renderContinueWatching } from '../js/movies.js';
 
     requireAuth();
     applyTheme();
 
     let allMovies = [];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      renderNavbar();  
-      renderFooter();  
+    window.addEventListener('DOMContentLoaded', async () => {
+      renderNavbar();
+      renderFooter();
+
+      // Continue Watching row — hidden until in-progress movies exist (Issue #13)
+      await renderContinueWatching('continue-watching-container');
+
       loadMovies();
       setupFilters();
     });
@@ -155,18 +161,15 @@
 
   <main class="pt-24 space-y-10">
 
-    <!-- Continue Watching -->
-    <section id="continue-watching-section" class="hidden px-[4%]">
-      <h2 class="text-xl font-bold mb-4">Continue Watching</h2>
-      <div id="continue-watching-row" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
-    </section>
+    <!-- Continue Watching Row (Issue #13) — hidden by JS until data exists -->
+    <div id="continue-watching-container"></div>
 
     <!-- Search + Genre -->
     <section class="px-[4%] space-y-6">
       <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
 
         <!-- Search -->
-        <input id="movie-search" type="text" placeholder="Search movies..." 
+        <input id="movie-search" type="text" placeholder="Search movies..."
           class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-md focus:border-blue-600 outline-none w-full md:w-80">
 
         <!-- Genres -->
@@ -195,4 +198,5 @@
   <div id="footer"></div>
 
 </body>
+
 </html>
