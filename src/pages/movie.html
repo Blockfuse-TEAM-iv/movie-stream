@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Movie Details - MovieStream</title>
   <link href="../styles/output.css" rel="stylesheet">
+
   <script type="module">
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
@@ -33,11 +34,14 @@
 </head>
 
 <body class="bg-slate-950 text-slate-200 min-h-screen">
-  <!-- Shared UI Portals -->
+
+  <!-- Navbar -->
   <div id="navbar"></div>
+
+  <!-- Toast container -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
 
-  <!-- Main Content Container Holder -->
+  <!-- Main content: empty -->
   <main id="movie-content" class="max-w-6xl mx-auto p-8 pt-24">
     <!-- Movie Details will be rendered here by movies.js -->
   </main>
@@ -118,10 +122,11 @@
       </div>
     </div>
   </div>
+    <!-- Content will be dynamically injected if needed -->
+  </main>
 
-  <!-- Shared Footer Portal -->
+  <!-- Footer -->
   <div id="footer"></div>
-</body>
-</body>
 
+</body>
 </html>
