@@ -33,7 +33,7 @@
   </script>
 </head>
 
-<body class="bg-slate-950 text-slate-200 min-h-screen">
+<body class="bg-black text-slate-200 min-h-screen flex flex-col">
 
   <!-- Navbar -->
   <div id="navbar"></div>
@@ -42,7 +42,7 @@
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
 
   <!-- Main content: empty -->
-  <main id="movie-content" class="max-w-6xl mx-auto p-8 pt-24">
+  <main id="movie-content" class="max-w-6xl mx-auto p-8 pt-24 flex-grow">
     <!-- Movie Details will be rendered here by movies.js -->
   </main>
 
@@ -59,7 +59,7 @@
     <div id="play-overlay"
       class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer group-hover:bg-black/20 transition-all">
       <div
-        class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+        class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
         <svg class="w-10 h-10 text-white fill-current ml-1" viewBox="0 0 20 20">
           <path d="M5 4v12l10-6z" />
         </svg>
@@ -71,12 +71,12 @@
       class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
       <!-- Progress Bar -->
       <input type="range" id="seek-bar" value="0" step="0.1"
-        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-4">
+        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-600 mb-4">
 
       <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-4">
           <!-- Play/Pause -->
-          <button id="play-pause-btn" class="text-white hover:text-blue-400 p-1">
+          <button id="play-pause-btn" class="text-white hover:text-red-500 p-1">
             <svg id="play-icon" class="w-6 h-6 fill-current" viewBox="0 0 20 20">
               <path d="M5 4v12l10-6z" />
             </svg>
@@ -87,13 +87,13 @@
 
           <!-- Volume -->
           <div class="flex items-center gap-2 group/volume">
-            <button id="mute-btn" class="text-white hover:text-blue-400 p-1">
+            <button id="mute-btn" class="text-white hover:text-red-500 p-1">
               <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M14 8.83v6.34L11.83 13H9v-2h2.83L14 8.83M16 4l-5 5H7v6h4l5 5V4z" />
               </svg>
             </button>
             <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1"
-              class="w-0 group-hover/volume:w-20 transition-all h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+              class="w-0 group-hover/volume:w-20 transition-all h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-600">
           </div>
 
           <!-- Time Display -->
@@ -113,7 +113,7 @@
           </select>
 
           <!-- Fullscreen -->
-          <button id="fullscreen-btn" class="text-white hover:text-blue-400 p-1">
+          <button id="fullscreen-btn" class="text-white hover:text-red-500 p-1">
             <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
               <path d="M1 1v6h2V3h4V1H1zm18 0h-6v2h4v4h2V1zM1 19h6v-2H3v-4H1v6zm18 0h-6v-2h4v-4h2v6z" />
             </svg>

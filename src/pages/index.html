@@ -6,69 +6,115 @@
   <title>MovieStream - Auth</title>
   <link href="../styles/output.css" rel="stylesheet">
 </head>
-<body class="bg-black  p-8 ">
+<body class="bg-black text-white min-h-screen lg:h-screen lg:overflow-hidden">
 
-
-  <!-- Card -->
-  <div class="flex flex-col md:flex-row bg-[#0b1120]/80 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl max-w-4xl w-full">
-
-    <!-- Left Image -->
-    <div class="md:w-1/2 hidden md:block">
+  <div class="flex flex-col lg:flex-row min-h-screen lg:h-full w-full">
+    
+    <!-- Left Image (Hidden on Mobile) -->
+    <div class="md:w-1/2 hidden md:block border-r border-white/5">
       <img 
-        src="https://images.unsplash.com/photo-1608889175123-8ee362201f81?q=80&w=800"
+        src="https://images.unsplash.com/photo-1608889175123-8ee362201f81?q=80&w=1200"
         alt="Movie Poster"
         class="h-full w-full object-cover"
       />
     </div> 
 
-    <!-- Right Form -->
-    <div class="w-full md:w-1/2 p-8 text-white ">
+    <!-- Right Form Section (Dark Background) -->
+    <div id="login-section" class="w-full lg:w-1/2 p-10 sm:p-12 lg:p-16 flex flex-col justify-center bg-black">
+      <div class="max-w-md mx-auto w-full">
+        <div class="text-3xl font-black text-red-600 tracking-tighter uppercase mb-10">MovieStream</div>
+        
+        <h2 class="text-3xl font-bold mb-2">Welcome back,</h2>
+        <p class="text-slate-400 mb-10">Sign in to your account</p>
 
-      <h2 class="text-2xl font-semibold mb-2">Welcome back,</h2>
-      <p class="text-gray-400 mb-6">Sign in to your account</p>
+        <div id="alert" class="hidden mb-6 p-4 rounded-xl text-sm font-bold bg-red-900/30 border border-red-500/50 text-red-200"></div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        <label class="text-sm text-gray-400">Email</label>
-        <input 
-          type="email"
-          placeholder="Email"
-          class="w-full mt-1 px-4 py-2 bg-transparent border border-red-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-        />
+        <!-- Form Elements -->
+        <form id="login-form" class="space-y-6">
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500">Email Address</label>
+            <input 
+              type="email" 
+              required
+              class="w-full bg-[#0b1120] border border-white/10 rounded-2xl px-6 py-5 focus:border-red-600 outline-none transition-all text-base"
+              placeholder="name@example.com"
+            >
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="block text-xs font-bold uppercase tracking-widest text-slate-500">Password</label>
+              <a href="#" class="text-[10px] font-bold text-red-600 hover:text-red-500 transition uppercase tracking-widest">Forgot?</a>
+            </div>
+            <input 
+              type="password" 
+              required
+              class="w-full bg-[#0b1120] border border-white/10 rounded-2xl px-6 py-5 focus:border-red-600 outline-none transition-all text-base"
+              placeholder="••••••••"
+            >
+          </div>
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-5 rounded-2xl transition-all shadow-2xl shadow-red-600/20 active:scale-[0.98] text-base uppercase tracking-widest mt-4">
+            Sign In
+          </button>
+        </form>
+
+        <p class="mt-12 text-slate-400 text-sm font-medium">
+          New to MovieStream? 
+          <button id="to-register" type="button" class="text-white font-bold hover:text-red-600 transition ml-1 underline decoration-red-600 underline-offset-8">Create account</button>
+        </p>
       </div>
-
-      <!-- Password -->
-      <div class="mb-2">
-        <label class="text-sm text-gray-400">Password</label>
-        <div class="relative">
-          <input 
-            type="password"
-            placeholder="password"
-            class="w-full mt-1 px-4 py-2 bg-transparent border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <span class="absolute right-3 top-3 text-gray-400 cursor-pointer">👁️</span>
-        </div>
-      </div>
-
-      <!-- Forgot -->
-      <div class="text-right mb-6">
-        <a href="#" class="text-sm text-gray-400 hover:text-white">Forgot password?</a>
-      </div>
-
-      <!-- Button -->
-      <button class="w-full bg-red-600 hover:bg-red-700 transition py-2 rounded-lg font-semibold">
-        Login
-      </button>
-
-      <!-- Bottom -->
-      <p class="text-sm text-gray-400 text-center mt-6">
-        Don’t have an account?
-        <a href="#" class="text-red-500 hover:underline">Register</a>
-      </p>
-
     </div>
-  </div>
 
+    <!-- Register Section (Initially Hidden) -->
+    <div id="register-section" class="w-full lg:w-1/2 p-10 sm:p-12 lg:p-16 flex flex-col justify-center bg-black hidden">
+      <div class="max-w-md mx-auto w-full">
+        <div class="text-3xl font-black text-red-600 tracking-tighter uppercase mb-10">MovieStream</div>
+
+        <h2 class="text-3xl font-bold mb-2">Create Account</h2>
+        <p class="text-slate-400 mb-10">Start your cinematic journey</p>
+
+        <div id="register-alert" class="hidden mb-6 p-4 rounded-xl text-sm font-bold bg-red-900/30 border border-red-500/50 text-red-200"></div>
+
+        <form id="register-form" class="space-y-6">
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500">Full Name</label>
+            <input 
+              type="text" 
+              required
+              class="w-full bg-[#0b1120] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-600 outline-none transition-all text-base"
+              placeholder="John Doe"
+            >
+          </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500">Email Address</label>
+            <input 
+              type="email" 
+              required
+              class="w-full bg-[#0b1120] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-600 outline-none transition-all text-base"
+              placeholder="name@example.com"
+            >
+          </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500">Password</label>
+            <input 
+              type="password" 
+              required
+              class="w-full bg-[#0b1120] border border-white/10 rounded-2xl px-6 py-4 focus:border-red-600 outline-none transition-all text-base"
+              placeholder="••••••••"
+            >
+          </div>
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-5 rounded-2xl transition-all shadow-2xl shadow-red-600/20 active:scale-[0.98] text-base uppercase tracking-widest mt-4">
+            Get Started
+          </button>
+        </form>
+
+        <p class="mt-12 text-slate-400 text-sm font-medium">
+          Already a member? 
+          <button id="to-login" type="button" class="text-white font-bold hover:text-red-600 transition ml-1 underline decoration-red-600 underline-offset-8">Sign in here</button>
+        </p>
+      </div>
+    </div>
+
+  </div>
 
   <script type="module">
     import { registerUser, loginUser } from '../js/auth.js';
@@ -78,12 +124,19 @@
 
     const loginSection = document.getElementById('login-section');
     const registerSection = document.getElementById('register-section');
-    const alertBox = document.getElementById('alert');
+    const loginAlert = document.getElementById('alert');
+    const registerAlert = document.getElementById('register-alert');
 
-    function showAlert(msg, type = 'error') {
-      alertBox.textContent = msg;
-      alertBox.className = `p-2 border rounded text-sm mb-4 ${type === 'error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700'}`;
-      alertBox.classList.remove('hidden');
+    function showLoginAlert(msg, type = 'error') {
+      loginAlert.textContent = msg;
+      loginAlert.className = `p-4 rounded-xl text-sm font-bold mb-6 ${type === 'error' ? 'bg-red-900/30 border border-red-500/50 text-red-200' : 'bg-green-900/30 border border-green-500/50 text-green-200'}`;
+      loginAlert.classList.remove('hidden');
+    }
+
+    function showRegisterAlert(msg, type = 'error') {
+      registerAlert.textContent = msg;
+      registerAlert.className = `p-4 rounded-xl text-sm font-bold mb-6 ${type === 'error' ? 'bg-red-900/30 border border-red-500/50 text-red-200' : 'bg-green-900/40 border border-green-500/50 text-green-200'}`;
+      registerAlert.classList.remove('hidden');
     }
 
     document.getElementById('to-register').addEventListener('click', () => {
@@ -98,21 +151,26 @@
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const res = await loginUser(e.target[0].value, e.target[1].value);
+      const email = e.target[0].value;
+      const password = e.target[1].value;
+      const res = await loginUser(email, password);
       if (res.success) window.location.href = './home.html';
-      else showAlert(res.message);
+      else showLoginAlert(res.message);
     });
 
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const res = await registerUser(e.target[0].value, e.target[1].value, e.target[2].value);
+      const name = e.target[0].value;
+      const email = e.target[1].value;
+      const password = e.target[2].value;
+      const res = await registerUser(name, email, password);
       if (res.success) {
-        showAlert(res.message, 'success');
+        showRegisterAlert(res.message, 'success');
         setTimeout(() => {
           registerSection.classList.add('hidden');
           loginSection.classList.remove('hidden');
         }, 1500);
-      } else showAlert(res.message);
+      } else showRegisterAlert(res.message);
     });
   </script>
 </body>
