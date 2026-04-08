@@ -21,9 +21,9 @@ export function renderNavbar() {
   const username = session ? session.name : 'Guest';
 
   container.innerHTML = `
-    <nav class="flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <nav class="flex items-center justify-between px-6 py-4 bg-black/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
       <div class="flex items-center gap-8">
-        <a href="home.html" class="text-2xl font-black text-blue-500 tracking-tighter uppercase">MovieStream</a>
+        <a href="home.html" class="text-2xl font-black text-red-600 tracking-tighter uppercase">MovieStream</a>
         <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
           <a href="home.html" class="hover:text-white transition">Browse</a>
           <a href="watchlist.html" class="hover:text-white transition">My List</a>
@@ -58,10 +58,10 @@ export function renderFooter() {
   const year = new Date().getFullYear();
 
   container.innerHTML = `
-    <footer class="bg-slate-950 border-t border-slate-900 py-12 px-6 mt-20">
+    <footer class="bg-black border-t border-white/5 py-4 px-6 mt-auto">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div>
-          <h2 class="text-xl font-black text-blue-500 tracking-tighter uppercase mb-2">MovieStream</h2>
+          <h2 class="text-xl font-black text-red-600 tracking-tighter uppercase mb-2">MovieStream</h2>
           <p class="text-slate-500 text-sm">© ${year} MovieStream. All rights reserved.</p>
         </div>
         <div class="flex gap-8 text-sm font-medium text-slate-400">
