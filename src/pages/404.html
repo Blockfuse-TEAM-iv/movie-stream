@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movie Not Found | MovieStream</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0f0f13;
+      font-family: 'Barlow', sans-serif;
+      color: #e2e2e2;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* ── Navbar — consistent with streaming site style ── */
+    nav {
+      background: #0f0f13;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #e50914;
+    }
+    nav a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #e50914; }
+
+    /* ── Main content ── */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 60px);
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    /* Film reel SVG animation */
+    .reel { animation: spin 8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 404 number */
+    .num-404 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 18vw, 160px);
+      line-height: 1;
+      color: #e50914;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 60px rgba(229,9,20,0.25);
+      margin: 16px 0 0;
+    }
+
+    /* Headline */
+    h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(20px, 4vw, 30px);
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e2e2e2;
+      margin: 8px 0 16px;
+    }
+
+    /* Subtext */
+    p {
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      color: rgba(226,226,226,0.45);
+      max-width: 380px;
+      line-height: 1.7;
+      margin: 0 auto 32px;
+    }
+
+    /* Divider */
+    .divider {
+      width: 40px; height: 2px;
+      background: #e50914;
+      margin: 0 auto 32px;
+      border-radius: 2px;
+    }
+
+    /* CTA button */
+    .btn-home {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      background: #e50914;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 3px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-home:hover {
+      background: #c40812;
+      transform: translateY(-1px);
+    }
+    .btn-home:active { transform: translateY(0); }
+
+    /* Footer note */
+    .error-code {
+      margin-top: 48px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.12);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar — matches streaming site layout -->
+  <nav>
+    <span class="logo">MovieStream</span>
+    <a href="home.html">← Home</a>
+  </nav>
+
+  <!-- Main 404 content -->
+  <main>
+
+    <!-- Animated film reel icon -->
+    <svg class="reel" width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="36" cy="36" r="34" stroke="#e50914" stroke-width="2" stroke-opacity="0.3"/>
+      <circle cx="36" cy="36" r="20" stroke="#e50914" stroke-width="1.5" stroke-opacity="0.4"/>
+      <circle cx="36" cy="36" r="6"  fill="#e50914" fill-opacity="0.7"/>
+      <circle cx="36" cy="14" r="4" fill="#e50914" fill-opacity="0.5"/>
+      <circle cx="36" cy="58" r="4" fill="#e50914" fill-opacity="0.5"/>
+      <circle cx="14" cy="36" r="4" fill="#e50914" fill-opacity="0.5"/>
+      <circle cx="58" cy="36" r="4" fill="#e50914" fill-opacity="0.5"/>
+      <circle cx="20" cy="20" r="4" fill="#e50914" fill-opacity="0.3"/>
+      <circle cx="52" cy="52" r="4" fill="#e50914" fill-opacity="0.3"/>
+      <circle cx="52" cy="20" r="4" fill="#e50914" fill-opacity="0.3"/>
+      <circle cx="20" cy="52" r="4" fill="#e50914" fill-opacity="0.3"/>
+      <line x1="36" y1="16" x2="36" y2="56" stroke="#e50914" stroke-opacity="0.1" stroke-width="1"/>
+      <line x1="16" y1="36" x2="56" y2="36" stroke="#e50914" stroke-opacity="0.1" stroke-width="1"/>
+    </svg>
+
+    <!-- 404 -->
+    <div class="num-404">404</div>
+
+    <!-- Required message per issue spec -->
+    <h1>Movie Not Found</h1>
+
+    <div class="divider"></div>
+
+    <p>
+      The movie you're looking for doesn't exist or the ID is invalid.
+      It may have been removed or the link is broken.
+    </p>
+
+    <!-- Required link per issue spec -->
+    <a href="home.html" class="btn-home">← Back to Home</a>
+
+    <div class="error-code">Error 404 &nbsp;·&nbsp; Invalid Movie ID &nbsp;·&nbsp; MovieStream</div>
+
+  </main>
+
+</body>
+</html>

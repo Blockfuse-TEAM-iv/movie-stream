@@ -1,32 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Profile - MovieStream</title>
-  <link href="../styles/output.css" rel="stylesheet">
-  <script type="module">
-    import { requireAuth } from '../js/router.js';
-    import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
-    
-    requireAuth();
-    applyTheme();
-    
-    window.addEventListener('DOMContentLoaded', () => {
-      renderNavbar();
-      renderFooter();
-    });
-  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile | MovieStream</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background-color: #0f0f13;
+      font-family: 'Barlow', sans-serif;
+      color: #e2e2e2;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      background: #0f0f13;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #e50914;
+    }
+    nav a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #e50914; }
+
+    /* ── Page layout ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 52px 24px 80px;
+    }
+
+    /* ── Page heading ── */
+    .page-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 7vw, 56px);
+      letter-spacing: 0.06em;
+      color: #e2e2e2;
+      line-height: 1;
+      margin: 0 0 4px;
+    }
+    .page-heading span { color: #e50914; }
+
+    .page-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 40px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 40px; height: 2px;
+      background: #e50914;
+      border-radius: 2px;
+      margin: 0 0 40px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px;
+      padding: 32px 36px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e50914;
+      margin: 0 0 24px;
+    }
+
+    /* ── Info rows ── */
+    .info-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-row:first-of-type { padding-top: 0; }
+
+    .info-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      min-width: 130px;
+      flex-shrink: 0;
+    }
+    .info-value {
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      color: #e2e2e2;
+    }
+
+    /* ── Stats grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(229,9,20,0.06);
+      border: 1px solid rgba(229,9,20,0.15);
+      border-radius: 4px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      line-height: 1;
+      color: #e50914;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 40px rgba(229,9,20,0.2);
+    }
+
+    .stat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 6px;
+    }
+
+    /* ── Logout button ── */
+    .btn-logout {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      background: transparent;
+      color: #e50914;
+      border: 1px solid #e50914;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+      margin-top: 32px;
+    }
+    .btn-logout:hover {
+      background: #e50914;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .btn-logout:active { transform: translateY(0); }
+
+    /* ── Loading / error states ── */
+    .state-msg {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      padding: 20px 0;
+    }
+
+    /* ── Fade-in ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeUp 0.4s ease both; }
+    .card:nth-child(2) { animation-delay: 0.08s; }
+    .card:nth-child(3) { animation-delay: 0.16s; }
+  </style>
 </head>
-<body class="bg-black text-slate-200 min-h-screen flex flex-col">
-  <div id="navbar"></div>
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-  
-  <main class="p-8 pt-24 flex-grow">
-    <h1 class="text-3xl font-bold">My Profile</h1>
-    <p class="text-slate-400 mt-2">Manage your account settings.</p>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <span class="logo">MovieStream</span>
+    <a href="home.html">← Home</a>
+  </nav>
+
+  <main>
+    <p class="page-sub">Account</p>
+    <h1 class="page-heading">My <span>Profile</span></h1>
+    <div class="divider"></div>
+
+    <!-- Account Info Card -->
+    <div class="card" id="info-card">
+      <p class="card-title">Account Information</p>
+      <div id="info-content">
+        <p class="state-msg">Loading…</p>
+      </div>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="card" id="stats-card">
+      <p class="card-title">Your Activity</p>
+      <div class="stats-grid" id="stats-content">
+        <div class="stat-box">
+          <div class="stat-number" id="watchlist-count">—</div>
+          <div class="stat-label">Watchlist</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number" id="progress-count">—</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <button class="btn-logout" id="logout-btn">→ Sign Out</button>
   </main>
 
-  <div id="footer"></div>
+  <!-- ── Scripts ── -->
+  <script type="module">
+    import { requireAuth } from '../js/router.js';
+    import { getCurrentUser, logoutUser } from '../js/auth.js';
+
+    /* ── 1. Auth gate — redirect if not logged in ── */
+    requireAuth();
+    const user = getCurrentUser();
+    if (!user) window.location.href = './index.html';
+
+    /* ── 2. Populate account info ── */
+    function formatDate(isoString) {
+      if (!isoString) return '—';
+      const d = new Date(isoString);
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    const infoContent = document.getElementById('info-content');
+    infoContent.innerHTML = `
+      <div class="info-row">
+        <span class="info-label">Name</span>
+        <span class="info-value">${user.name || '—'}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">${user.email || '—'}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Member Since</span>
+        <span class="info-value">${formatDate(user.createdAt)}</span>
+      </div>
+    `;
+
+    /* ── 3. Watchlist count — from user object ── */
+    const watchlist = Array.isArray(user.watchlist) ? user.watchlist : [];
+    document.getElementById('watchlist-count').textContent = watchlist.length;
+
+    /* ── 4. In-progress count — from user object ── */
+    const progress = user.watchProgress && typeof user.watchProgress === 'object' ? user.watchProgress : {};
+    document.getElementById('progress-count').textContent = Object.keys(progress).length;
+
+    /* ── 5. Logout ── */
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      logoutUser();                          // removes session from localStorage
+      window.location.href = './index.html'; // redirect to login page
+    });
+  </script>
+
 </body>
 </html>
