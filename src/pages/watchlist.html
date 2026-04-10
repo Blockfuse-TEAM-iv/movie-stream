@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Watchlist - MovieStream</title>
   <link href="../styles/output.css" rel="stylesheet">
-  <script type="module">
+  <!-- <script type="module">
     import { requireAuth } from '../js/router.js';
     import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
     
@@ -16,7 +16,7 @@
       renderNavbar();
       renderFooter();
     });
-  </script>
+  </script> -->
 </head>
 <body class="bg-black text-slate-200 min-h-screen flex flex-col">
   <div id="navbar"></div>
@@ -26,6 +26,133 @@
     <h1 class="text-3xl font-bold">My Watchlist</h1>
     <p class="text-slate-400 mt-2">Your collection of movies to watch.</p>
   </main>
+
+ <!-- MOVIE WATCH LIST SECTION -->
+
+  <!-- Container -->
+
+  <div class="max-w-7xl mx-auto px-4 py-6 ">
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+
+      <!-- Movie Card -->
+      <!-- Repeat this block -->
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/background.jpg.jpeg"
+             alt="Movie Poster"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300"></div>
+      </div>
+
+      <!-- Duplicate multiple times -->
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 1.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 2.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 5.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 4.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 6.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 11.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- second picture section -->
+
+  <div class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+
+      <!-- Movie Card -->
+      <!-- Repeat this block -->
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 7.jpeg"
+             alt="Movie Poster"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition duration-300"></div>
+      </div>
+
+      <!-- Duplicate multiple times -->
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 13.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 9.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 10.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 12.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 8.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+      <div class="group relative rounded-xl overflow-hidden bg-zinc-900">
+        <img src="/pic 13.jpeg"
+             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"/>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
 
   <div id="footer"></div>
 </body>
