@@ -1,294 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Profile | MovieStream</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-
-    body {
-      background-color: #0f0f13;
-      font-family: 'Barlow', sans-serif;
-      color: #e2e2e2;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    /* ── Navbar ── */
-    nav {
-      background: #0f0f13;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 0 40px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky; top: 0; z-index: 10;
-    }
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 3px;
-      color: #e50914;
-    }
-    nav a {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 20px;
-      letter-spacing: 1.5px;
-      color: rgba(255,255,255,0.45);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: #e50914; }
-
-    /* ── Page layout ── */
-    main {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 52px 24px 80px;
-    }
-
-    /* ── Page heading ── */
-    .page-heading {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(36px, 7vw, 56px);
-      letter-spacing: 0.06em;
-      color: #e2e2e2;
-      line-height: 1;
-      margin: 0 0 4px;
-    }
-    .page-heading span { color: #e50914; }
-
-    .page-sub {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 12px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      margin-bottom: 40px;
-    }
-
-    /* ── Divider ── */
-    .divider {
-      width: 40px; height: 2px;
-      background: #e50914;
-      border-radius: 2px;
-      margin: 0 0 40px;
-    }
-
-    /* ── Card ── */
-    .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 4px;
-      padding: 32px 36px;
-      margin-bottom: 20px;
-    }
-
-    .card-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #e50914;
-      margin: 0 0 24px;
-    }
-
-    /* ── Info rows ── */
-    .info-row {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .info-row:first-of-type { padding-top: 0; }
-
-    .info-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      min-width: 130px;
-      flex-shrink: 0;
-    }
-    .info-value {
-      font-family: 'Barlow', sans-serif;
-      font-size: 15px;
-      color: #e2e2e2;
-    }
-
-    /* ── Stats grid ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-    }
-
-    .stat-box {
-      background: rgba(229,9,20,0.06);
-      border: 1px solid rgba(229,9,20,0.15);
-      border-radius: 4px;
-      padding: 24px 20px;
-      text-align: center;
-    }
-
-    .stat-number {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 52px;
-      line-height: 1;
-      color: #e50914;
-      letter-spacing: 0.04em;
-      text-shadow: 0 0 40px rgba(229,9,20,0.2);
-    }
-
-    .stat-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-      margin-top: 6px;
-    }
-
-    /* ── Logout button ── */
-    .btn-logout {
-      display: inline-block;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      padding: 14px 36px;
-      background: transparent;
-      color: #e50914;
-      border: 1px solid #e50914;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s, transform 0.15s;
-      margin-top: 32px;
-    }
-    .btn-logout:hover {
-      background: #e50914;
-      color: #fff;
-      transform: translateY(-1px);
-    }
-    .btn-logout:active { transform: translateY(0); }
-
-    /* ── Loading / error states ── */
-    .state-msg {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 14px;
-      letter-spacing: 1.5px;
-      color: rgba(255,255,255,0.25);
-      text-transform: uppercase;
-      padding: 20px 0;
-    }
-
-    /* ── Fade-in ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .card { animation: fadeUp 0.4s ease both; }
-    .card:nth-child(2) { animation-delay: 0.08s; }
-    .card:nth-child(3) { animation-delay: 0.16s; }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav>
-    <span class="logo">MovieStream</span>
-    <a href="home.html">← Home</a>
-  </nav>
-
-  <main>
-    <p class="page-sub">Account</p>
-    <h1 class="page-heading">My <span>Profile</span></h1>
-    <div class="divider"></div>
-
-    <!-- Account Info Card -->
-    <div class="card" id="info-card">
-      <p class="card-title">Account Information</p>
-      <div id="info-content">
-        <p class="state-msg">Loading…</p>
-      </div>
-    </div>
-
-    <!-- Stats Card -->
-    <div class="card" id="stats-card">
-      <p class="card-title">Your Activity</p>
-      <div class="stats-grid" id="stats-content">
-        <div class="stat-box">
-          <div class="stat-number" id="watchlist-count">—</div>
-          <div class="stat-label">Watchlist</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-number" id="progress-count">—</div>
-          <div class="stat-label">In Progress</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Logout -->
-    <button class="btn-logout" id="logout-btn">→ Sign Out</button>
-  </main>
-
-  <!-- ── Scripts ── -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - MovieStream</title>
+  <link href="../styles/output.css" rel="stylesheet">
   <script type="module">
     import { requireAuth } from '../js/router.js';
+    import { renderNavbar, renderFooter, applyTheme, showToast } from '../js/ui.js';
     import { getCurrentUser, logoutUser } from '../js/auth.js';
 
-    /* ── 1. Auth gate — redirect if not logged in ── */
+    // Protect page
     requireAuth();
-    const user = getCurrentUser();
-    if (!user) window.location.href = './index.html';
+    // Apply theme
+    applyTheme();
 
-    /* ── 2. Populate account info ── */
-    function formatDate(isoString) {
-      if (!isoString) return '—';
-      const d = new Date(isoString);
-      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    window.addEventListener('DOMContentLoaded', () => {
+      renderNavbar();
+      renderFooter();
+      loadProfileData();
+    });
+
+    function loadProfileData() {
+      const user = getCurrentUser();
+      if (!user) {
+        window.location.href = './index.html';
+        return;
+      }
+
+      // Populate Name/Email
+      document.getElementById('profile-name').textContent = user.name || 'User';
+      document.getElementById('profile-email').textContent = user.email || '—';
+      document.getElementById('profile-initial').textContent = (user.name || 'U').charAt(0).toUpperCase();
+
+      // Member Since
+      const createdAt = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+      }) : '—';
+      document.getElementById('member-since').textContent = createdAt;
+
+      // Stats
+      const watchlist = Array.isArray(user.watchlist) ? user.watchlist : [];
+      const progress = user.watchProgress && typeof user.watchProgress === 'object' ? user.watchProgress : {};
+      
+      document.getElementById('watchlist-count').textContent = watchlist.length;
+      document.getElementById('progress-count').textContent = Object.keys(progress).length;
     }
 
-    const infoContent = document.getElementById('info-content');
-    infoContent.innerHTML = `
-      <div class="info-row">
-        <span class="info-label">Name</span>
-        <span class="info-value">${user.name || '—'}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Email</span>
-        <span class="info-value">${user.email || '—'}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Member Since</span>
-        <span class="info-value">${formatDate(user.createdAt)}</span>
-      </div>
-    `;
+    // Attach sign-out logic
+    window.handleSignOut = () => {
+      logoutUser();
+      window.location.href = './index.html';
+    };
 
-    /* ── 3. Watchlist count — from user object ── */
-    const watchlist = Array.isArray(user.watchlist) ? user.watchlist : [];
-    document.getElementById('watchlist-count').textContent = watchlist.length;
-
-    /* ── 4. In-progress count — from user object ── */
-    const progress = user.watchProgress && typeof user.watchProgress === 'object' ? user.watchProgress : {};
-    document.getElementById('progress-count').textContent = Object.keys(progress).length;
-
-    /* ── 5. Logout ── */
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      logoutUser();                          // removes session from localStorage
-      window.location.href = './index.html'; // redirect to login page
-    });
   </script>
+</head>
+<body class="bg-black text-slate-200 min-h-screen flex flex-col">
+
+  <div id="navbar"></div>
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+  <main class="flex-grow pt-28 pb-20 px-[4%] max-w-4xl mx-auto w-full">
+    
+    <!-- Back Button -->
+    <a href="home.html" class="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 group">
+      <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="text-sm font-bold uppercase tracking-widest">Back to Home</span>
+    </a>
+
+    <!-- Profile Header -->
+    <div class="flex flex-col md:flex-row items-center gap-8 mb-12">
+      <div class="w-24 h-24 rounded-full bg-red-600 flex items-center justify-center text-4xl font-black text-white shadow-2xl shadow-red-600/30" id="profile-initial">
+        U
+      </div>
+      <div class="text-center md:text-left">
+        <h1 class="text-4xl font-black text-white tracking-tight mb-1" id="profile-name">Loading...</h1>
+        <p class="text-slate-400 font-medium" id="profile-email">email@example.com</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Stats Box -->
+      <div class="bg-slate-900/40 border border-white/5 p-8 rounded-2xl flex flex-col gap-6">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-red-500">Your Activity</h3>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center p-4 bg-black/40 rounded-xl border border-white/5">
+            <div class="text-3xl font-black text-white" id="watchlist-count">0</div>
+            <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">Watchlist</div>
+          </div>
+          <div class="text-center p-4 bg-black/40 rounded-xl border border-white/5">
+            <div class="text-3xl font-black text-white" id="progress-count">0</div>
+            <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mt-1">In Progress</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/5">
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-slate-500">Member Since</span>
+            <span class="text-slate-300 font-medium" id="member-since">January 1, 2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings/Actions -->
+      <div class="bg-slate-900/40 border border-white/5 p-8 rounded-2xl flex flex-col justify-between items-start">
+        <div class="w-full">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-red-500 mb-6">Profile Actions</h3>
+          <p class="text-sm text-slate-400 leading-relaxed mb-6">
+            Update your profile details and manage your account security.
+          </p>
+        </div>
+
+        <button onclick="handleSignOut()" class="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs font-bold uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-red-600/20">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Sign Out
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="footer"></div>
 
 </body>
 </html>
