@@ -89,35 +89,31 @@ function renderMovieDetails(movie) {
       <div class="relative z-10 max-w-7xl mx-auto px-6 pt-28 pb-12 flex flex-col md:flex-row gap-10 items-start">
 
         <!-- Poster + Hover Preview -->
-        <div class="shrink-0 w-64 md:w-80 group/poster relative cursor-pointer" id="poster-card">
-          <!-- Outer wrapper: keeps aspect ratio, clips everything -->
-          <div class="relative w-full rounded-xl overflow-hidden shadow-2xl border border-white/10 aspect-[2/3]">
+        <div class="shrink-0 group/poster relative cursor-pointer" id="poster-card">
+          <!-- Outer wrapper: clips everything -->
+          <div class="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/10">
 
-            <!-- Poster Image (fades out on hover to reveal preview) -->
-            <img src="${movie.poster.replace('media.themoviedb.org', 'image.tmdb.org')}" alt="${movie.title}"
-                 id="poster-img"
-                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover/poster:opacity-0 z-10">
+            <!-- Poster Image Wrapper -->
+            <div class="poster-img-wrapper absolute inset-0 z-10 transition-opacity duration-500">
+              <img src="${movie.poster.replace('media.themoviedb.org', 'image.tmdb.org')}" alt="${movie.title}"
+                   id="poster-img"
+                   class="w-full h-full object-cover">
+              
+              <!-- Dark gradient at bottom (always visible) -->
+              <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 to-transparent z-20"></div>
 
-            <!-- Preview Video (plays underneath on hover) -->
-            <video id="preview-video"
-                   class="absolute inset-0 w-full h-full object-cover"
-                   muted playsinline preload="none"
-                   src="${videoUrl}">
-            </video>
-
-            <!-- Dark gradient at bottom (always visible) -->
-            <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 to-transparent z-20"></div>
-
-            <!-- Play button — always visible at bottom, pulses on hover -->
-            <div class="absolute bottom-4 left-0 right-0 flex justify-center z-30">
-              <button id="poster-play-btn"
-                      class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg shadow-red-600/40 transition-all group-hover/poster:scale-105">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5 4v12l10-6z"/></svg>
-                Play
-              </button>
+              <!-- Play button overlay — always visible at bottom -->
+              <div class="absolute bottom-6 left-0 right-0 flex justify-center z-30">
+                <button id="poster-play-btn"
+                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-red-600/40 transition-all group-hover/poster:scale-110">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5 4v12l10-6z"/></svg>
+                  Play
+                </button>
+              </div>
             </div>
 
-            <!-- No hover text label - just let the video speak -->
+            <!-- YouTube Mount point -->
+            <div id="yt-player-container" class="absolute inset-0 w-full h-full pointer-events-none"></div>
           </div>
         </div>
 
@@ -207,27 +203,90 @@ function renderMovieDetails(movie) {
 }
 
 /**
- * Hover-preview logic — plays a video snippet starting 2 min in.
+ * Hover-preview logic — transitions to a landscape YouTube trailer.
  */
 function initHoverPreview(movie) {
-  const posterContainer = document.querySelector('.group\\/poster');
-  const previewVideo = document.getElementById('preview-video');
-  const posterImg = document.getElementById('poster-img');
-  if (!posterContainer || !previewVideo) return;
+  const posterCard = document.getElementById('poster-card');
+  const ytMount = document.getElementById('yt-player-container');
+  if (!posterCard || !ytMount || !movie.trailerUrl) return;
 
+  let player = null;
   let previewTimeout = null;
 
-  posterContainer.addEventListener('mouseenter', () => {
+  // Extract video ID from embed URL
+  const getYTid = (url) => {
+    const parts = url.split('/');
+    return parts[parts.length - 1].split('?')[0];
+  };
+
+  const videoId = getYTid(movie.trailerUrl);
+
+  posterCard.addEventListener('mouseenter', () => {
+    // 1. Immediately start CSS transition to landscape
+    posterCard.classList.add('is-landscape');
+
+    // 2. Wait 600ms before initialising YouTube
     previewTimeout = setTimeout(() => {
-      previewVideo.currentTime = PREVIEW_OFFSET_SECONDS;
-      previewVideo.play().catch(() => {});
-    }, 400); // small delay to avoid accidental triggers
+      // Create black overlay to suppress title flash
+      const overlay = document.createElement('div');
+      overlay.className = 'trailer-overlay';
+      ytMount.appendChild(overlay);
+
+      // Mount div for the iframe
+      const mountPoint = document.createElement('div');
+      mountPoint.id = 'yt-frame';
+      ytMount.appendChild(mountPoint);
+
+      player = new YT.Player('yt-frame', {
+        height: '100%',
+        width: '100%',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+          showinfo: 0,
+          iv_load_policy: 3,
+          playsinline: 1,
+          origin: window.location.origin,
+          disablekb: 1
+        },
+        events: {
+          onStateChange: (event) => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              // Fade out and remove overlay
+              overlay.style.opacity = '0';
+              setTimeout(() => overlay.remove(), 300);
+            }
+          }
+        }
+      });
+    }, 600);
   });
 
-  posterContainer.addEventListener('mouseleave', () => {
+  posterCard.addEventListener('mouseleave', () => {
+    // 1. Shrink back to portrait
+    posterCard.classList.remove('is-landscape');
+
+    // 2. Clear timeout and destroy player
     clearTimeout(previewTimeout);
-    previewVideo.pause();
-    previewVideo.currentTime = PREVIEW_OFFSET_SECONDS;
+
+    if (player) {
+      // Add a solid black overlay instantly before destroying to avoid visual glitches
+      const quickOverlay = document.createElement('div');
+      quickOverlay.className = 'trailer-overlay';
+      ytMount.appendChild(quickOverlay);
+
+      try {
+        player.destroy();
+      } catch (e) {}
+      player = null;
+    }
+
+    // Clear mount point but keep the structure
+    ytMount.innerHTML = '';
   });
 }
 
