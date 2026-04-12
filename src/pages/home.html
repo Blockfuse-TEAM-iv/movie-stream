@@ -30,7 +30,7 @@
     // ===============================
     async function loadMovies() {
       try {
-        const res = await fetch('../data/movies.json');
+        const res = await fetch(`../data/movies.json?t=${Date.now()}`);
         allMovies = await res.json();
 
         renderMovies(allMovies);
@@ -63,22 +63,26 @@
         return;
       }
 
+      // Sort by lastWatched (most recent first)
+      inProgressIds.sort((a, b) => {
+        const entryA = user.watchProgress[a];
+        const entryB = user.watchProgress[b];
+        const timeA = typeof entryA === 'object' ? (entryA.lastWatched || 0) : 0;
+        const timeB = typeof entryB === 'object' ? (entryB.lastWatched || 0) : 0;
+        return timeB - timeA;
+      });
+
       section.classList.remove('hidden');
       
-      const inProgressMovies = allMovies.filter(m => inProgressIds.includes(m.id.toString()));
+      // Map and Filter to ensure only existing movies are rendered
+      const inProgressMovies = inProgressIds
+        .map(id => allMovies.find(m => m.id.toString() === id))
+        .filter(m => m !== undefined);
 
-      // Guard: if IDs don't match any real movie, keep hidden
       if (inProgressMovies.length === 0) {
         section.classList.add('hidden');
         return;
       }
-      
-      // Sort by most recently watched first
-      inProgressMovies.sort((a, b) => {
-        const tsA = typeof user.watchProgress[a.id] === 'object' ? (user.watchProgress[a.id].ts || 0) : 0;
-        const tsB = typeof user.watchProgress[b.id] === 'object' ? (user.watchProgress[b.id].ts || 0) : 0;
-        return tsB - tsA;
-      });
       
       row.innerHTML = inProgressMovies.map(movie => {
         const entry = user.watchProgress[movie.id];
@@ -114,9 +118,6 @@
           </div>
         `;
       }).join('');
-
-      // Notify chevron script that content is ready
-      window.dispatchEvent(new Event('cwRendered'));
     }
 
     // ===============================
@@ -306,21 +307,22 @@
     <!-- Continue Watching -->
     <section id="continue-watching-section" class="hidden px-[4%]">
       <h2 class="text-xl font-bold mb-4">Continue Watching</h2>
-      <!-- Scrollable row with chevrons -->
-      <div class="relative">
+      <div class="relative group/cv">
         <!-- Left Chevron -->
-        <button id="cw-scroll-left"
-          class="absolute left-0 top-0 bottom-4 pr-5 pl-2 bg-gradient-to-r from-black via-black/80 to-transparent z-20 flex items-center text-slate-400 hover:text-white transition-colors"
-          style="opacity:0;pointer-events:none">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" /></svg>
+        <button id="cv-scroll-left" class="absolute left-0 top-0 bottom-0 pr-6 pl-2 bg-gradient-to-r from-black via-black/80 to-transparent z-10 opacity-0 group-hover/cv:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white disabled:opacity-0 disabled:pointer-events-none">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-        <!-- Row -->
+
+        <!-- The Row -->
         <div id="continue-watching-row" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth"></div>
+
         <!-- Right Chevron -->
-        <button id="cw-scroll-right"
-          class="absolute right-0 top-0 bottom-4 pl-5 pr-2 bg-gradient-to-l from-black via-black/80 to-transparent z-20 flex items-center text-slate-400 hover:text-white transition-colors"
-          style="opacity:0;pointer-events:none">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
+        <button id="cv-scroll-right" class="absolute right-0 top-0 bottom-0 pl-6 pr-2 bg-gradient-to-l from-black via-black/80 to-transparent z-10 opacity-0 group-hover/cv:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white disabled:opacity-0 disabled:pointer-events-none">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </section>
@@ -399,30 +401,40 @@
         // Initial check
         setTimeout(updateArrows, 200);
       }
-    </script>
 
-    <script>
-      // Continue Watching chevrons
-      const cwContainer = document.getElementById('continue-watching-row');
-      const cwRight = document.getElementById('cw-scroll-right');
-      const cwLeft = document.getElementById('cw-scroll-left');
+      // ===============================
+      // CONTINUE WATCHING SCROLL
+      // ===============================
+      const cvContainer = document.getElementById('continue-watching-row');
+      const cvBtnRight = document.getElementById('cv-scroll-right');
+      const cvBtnLeft = document.getElementById('cv-scroll-left');
 
-      if (cwContainer && cwRight && cwLeft) {
-        const updateCwArrows = () => {
-          const { scrollLeft, scrollWidth, clientWidth } = cwContainer;
-          const atLeft = scrollLeft <= 10;
-          const atRight = scrollLeft >= scrollWidth - clientWidth - 10;
-          cwLeft.style.opacity = atLeft ? '0' : '1';
-          cwLeft.style.pointerEvents = atLeft ? 'none' : 'auto';
-          cwRight.style.opacity = atRight ? '0' : '1';
-          cwRight.style.pointerEvents = atRight ? 'none' : 'auto';
+      if (cvContainer && cvBtnRight && cvBtnLeft) {
+        const updateCvArrows = () => {
+          const { scrollLeft, scrollWidth, clientWidth } = cvContainer;
+          cvBtnLeft.style.opacity = scrollLeft > 10 ? '1' : '0';
+          cvBtnLeft.style.pointerEvents = scrollLeft > 10 ? 'auto' : 'none';
+          
+          cvBtnRight.style.opacity = scrollLeft < (scrollWidth - clientWidth - 10) ? '1' : '0';
+          cvBtnRight.style.pointerEvents = scrollLeft < (scrollWidth - clientWidth - 10) ? 'auto' : 'none';
         };
-        cwContainer.addEventListener('scroll', updateCwArrows);
-        window.addEventListener('resize', updateCwArrows);
-        cwRight.addEventListener('click', (e) => { e.stopPropagation(); cwContainer.scrollBy({ left: 260, behavior: 'smooth' }); });
-        cwLeft.addEventListener('click', (e) => { e.stopPropagation(); cwContainer.scrollBy({ left: -260, behavior: 'smooth' }); });
-        // Re-run after content renders
-        window.addEventListener('cwRendered', () => setTimeout(updateCwArrows, 100));
+
+        cvContainer.addEventListener('scroll', updateCvArrows);
+        window.addEventListener('resize', updateCvArrows);
+
+        cvBtnRight.addEventListener('click', () => {
+          cvContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+
+        cvBtnLeft.addEventListener('click', () => {
+          cvContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        // Trigger check when content might change
+        const observer = new MutationObserver(updateCvArrows);
+        observer.observe(cvContainer, { childList: true });
+
+        setTimeout(updateCvArrows, 500);
       }
     </script>
 
