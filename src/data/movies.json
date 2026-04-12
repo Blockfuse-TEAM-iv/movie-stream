@@ -11,8 +11,7 @@
     "director": "Brad Peyton",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/bcM2Tl5HlsvPBnL8DKP9Ie6vU4r.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/jNfysDIOABcHmh4xGHdGEr0CJoZ.jpg",
-    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4",
-  },
+    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4"},
   {
     "id": 2,
     "title": "Red One",
@@ -25,8 +24,7 @@
     "director": "Jake Kasdan",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/cdqLnri3NEGcmfnqwk2TSIYtddg.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/3m9jF9Wv2Ymre9YvX65pXp7k63O.jpg",
-    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4",
-  },
+    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4"},
   {
     "id": 3,
     "title": "Stay",
@@ -39,8 +37,7 @@
     "director": "Pen-Ek Ratanaruang",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/bKHjKhxBuybPPOUVnbHRQLX9L6z.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/bKHjKhxBuybPPOUVnbHRQLX9L6z.jpg",
-    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4",
-  },
+    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4"},
   {
     "id": 4,
     "title": "A Good Day to Die Hard",
@@ -53,8 +50,7 @@
     "director": "John Moore",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/qJ0csDXAVFMsNn0cRcjy6W6PxAK.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/uK55h2mZ4gJAsu99R4Zid4YhJ65.jpg",
-    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4",
-  },
+    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4"},
   {
     "id": 5,
     "title": "Captain America: Brave New World",
@@ -67,8 +63,7 @@
     "director": "Julius Onah",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
-    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4",
-  },
+    "videoUrl": "../../assets/videos/Captain.America.Brave.New.World.mp4"},
   {
     "id": 6,
     "title": "Mea Culpa",
@@ -81,8 +76,7 @@
     "director": "Tyler Perry",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/roxD9VCTTXYfPjVj9HiSC5IMtc7.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/9vXUnk9pXF4WlE9u9t2TzQzQZ.jpg",
-    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4",
-  },
+    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4"},
   {
     "id": 7,
     "title": "Murder Mystery 2",
@@ -95,8 +89,7 @@
     "director": "Jeremy Garelick",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/s1VzVhXlqsevi8zeCMG9A16nEUf.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/bT3IpP7OQwSTvAFApZ0G6sI7S7g.jpg",
-    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4",
-  },
+    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4"},
   {
     "id": 8,
     "title": "Oppenheimer",
@@ -109,8 +102,7 @@
     "director": "Christopher Nolan",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/fm61CvWybbkyky3vWRvHnC89QH3.jpg",
-    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4",
-  },
+    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4"},
   {
     "id": 9,
     "title": "Stolen Girl",
@@ -122,8 +114,7 @@
     "cast": ["TBC"],
     "director": "TBC",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/fZlNXEHZsBp7unqw009MeBbMv87.jpg",
-    "videoUrl": "./videos/Stolen.Girl.2025.mkv",
-  },
+    "videoUrl": "./videos/Stolen.Girl.2025.mkv"},
   {
     "id": 10,
     "title": "One of Them Days",
@@ -136,8 +127,7 @@
     "director": "Lawrence Lamont",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/ccn6bFUA5DECjA3Lo0CuJqGNQCv.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/ccn6bFUA5DECjA3Lo0CuJqGNQCv.jpg",
-    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4",
-  },
+    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4"},
   {
     "id": 11,
     "title": "The Beast Within",
@@ -150,8 +140,7 @@
     "director": "Alexander J. Farrell",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/5RvNjlDufqUBH3iHBPb1cS53wXl.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/5RvNjlDufqUBH3iHBPb1cS53wXl.jpg",
-    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4",
-  },
+    "videoUrl": "../../assets/videos/Mea.Culpa.2024.mp4"},
   {
     "id": 12,
     "title": "The Beekeeper",
@@ -164,8 +153,7 @@
     "director": "David Ayer",
     "poster": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/A7EByudX0eOzlkQ2FIbogzyazm2.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/47SVqaO02CUoiJJY366Y9n98unI.jpg",
-    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4",
-  },
+    "videoUrl": "../../assets/videos/A_Good_Day_to_Die_Hard_(2013)_.mp4"},
   {
     "id": 13,
     "title": "The Exorcism",
@@ -178,8 +166,7 @@
     "director": "Joshua John Miller",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/ar2h87jlTfMlrDZefR3VFz1SfgH.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/ar2h87jlTfMlrDZefR3VFz1SfgH.jpg",
-    "videoUrl": "./videos/The.Exorcism.2024.mkv",
-  },
+    "videoUrl": "./videos/The.Exorcism.2024.mkv"},
   {
     "id": 14,
     "title": "The Killer",
@@ -192,8 +179,7 @@
     "director": "David Fincher",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/ipkcgvN7h3yZnbYowthloHLKsf4.jpg",
     "backdrop": "https://image.tmdb.org/t/p/original/ipkcgvN7h3yZnbYowthloHLKsf4.jpg",
-    "videoUrl": "./videos/The.Killer.2023.mkv",
-  },
+    "videoUrl": "./videos/The.Killer.2023.mkv"},
   {
     "id": 15,
     "title": "The Killer's Game",
@@ -205,8 +191,7 @@
     "cast": ["Dave Bautista", "Sofia Boutella"],
     "director": "J.J. Perry",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/4bKlTeOUr5AKrLky8mwWvlQqyVd.jpg",
-    "videoUrl": "./videos/The.Killers.Game.2024.mkv",
-  },
+    "videoUrl": "./videos/The.Killers.Game.2024.mkv"},
   {
     "id": 16,
     "title": "The Old Guard 2",
@@ -218,8 +203,7 @@
     "cast": ["Charlize Theron", "KiKi Layne"],
     "director": "Victoria Mahoney",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/wqfu3bPLJaEWJVk3QOm0rKhxf1A.jpg",
-    "videoUrl": "./videos/The.Old.Guard.2.2025.mkv",
-  },
+    "videoUrl": "./videos/The.Old.Guard.2.2025.mkv"},
   {
     "id": 17,
     "title": "The Union",
@@ -231,8 +215,7 @@
     "cast": ["Mark Wahlberg", "Halle Berry"],
     "director": "Julian Farino",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/d9CTnTHip1RbVi2OQbA2LJJQAGI.jpg",
-    "videoUrl": "./videos/The.Union.2024.mkv",
-  },
+    "videoUrl": "./videos/The.Union.2024.mkv"},
   {
     "id": 18,
     "title": "Bad Genius",
@@ -244,8 +227,7 @@
     "cast": ["TBC"],
     "director": "Nawapol Thamrongrattanarit",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/h5hONXZ4hPgniv1DXMB1IZohhpO.jpg",
-    "videoUrl": "./videos/Bad.Genius.2024.mkv",
-  },
+    "videoUrl": "./videos/Bad.Genius.2024.mkv"},
   {
     "id": 19,
     "title": "Detained",
@@ -257,8 +239,7 @@
     "cast": ["Abbie Cornish", "Liam Cunningham"],
     "director": "Ridley Scott",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/lR7RTf2vsJl9lwCUmDyKCmU7X6L.jpg",
-    "videoUrl": "./videos/Detained.2024.mkv",
-  },
+    "videoUrl": "./videos/Detained.2024.mkv"},
   {
     "id": 20,
     "title": "Freedom",
@@ -270,8 +251,7 @@
     "cast": ["TBC"],
     "director": "TBC",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/b2YL2kncIqlcDcqly78AsOPJi6r.jpg",
-    "videoUrl": "./videos/Freedom.2024.mkv",
-  },
+    "videoUrl": "./videos/Freedom.2024.mkv"},
   {
     "id": 21,
     "title": "GTMax",
@@ -283,8 +263,7 @@
     "cast": ["TBC"],
     "director": "TBC",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/exXm4o4ebjGr7besyFjuRfKDoVf.jpg",
-    "videoUrl": "./videos/GTMax..2024.mkv",
-  },
+    "videoUrl": "./videos/GTMax..2024.mkv"},
   {
     "id": 22,
     "title": "My Name Is Vendetta",
@@ -296,8 +275,7 @@
     "cast": ["Alessandro Gassmann", "Ginevra Francesconi"],
     "director": "Pippo Mezzapesa",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/7l3war94J4tRyWUiLAGokr3ViF2.jpg",
-    "videoUrl": "./videos/My.Name.Is.Vendetta.2022.mkv",
-  },
+    "videoUrl": "./videos/My.Name.Is.Vendetta.2022.mkv"},
   {
     "id": 23,
     "title": "The Old Guard",
@@ -309,8 +287,7 @@
     "cast": ["Charlize Theron", "KiKi Layne"],
     "director": "Gina Prince-Bythewood",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/cjr4NWURcVN3gW5FlHeabgBHLrY.jpg",
-    "videoUrl": "./videos/The.Old.Guard.2020.mkv",
-  },
+    "videoUrl": "./videos/The.Old.Guard.2020.mkv"},
   {
     "id": 24,
     "title": "Underground",
@@ -322,8 +299,7 @@
     "cast": ["TBC"],
     "director": "TBC",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/lnWkyG3LLgbbrIEeyl5mK5VRFe4.jpg",
-    "videoUrl": "./videos/Underground.2019.mkv",
-  },
+    "videoUrl": "./videos/Underground.2019.mkv"},
   {
     "id": 25,
     "title": "Trigger Warning",
@@ -335,8 +311,7 @@
     "cast": ["Jessica Alba", "Mark Webber"],
     "director": "Mouly Surya",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/6XJM3C47iGOK9nFU6yLFCSf4U5c.jpg",
-    "videoUrl": "./videos/Trigger.Warning.2024.mkv",
-  },
+    "videoUrl": "./videos/Trigger.Warning.2024.mkv"},
   {
     "id": 26,
     "title": "Venom: The Last Dance",
@@ -348,8 +323,7 @@
     "cast": ["Tom Hardy", "Chiwetel Ejiofor"],
     "director": "Kelly Marcel",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/vGXptEdgZIhPg3cGlc7e8sNPC2e.jpg",
-    "videoUrl": "./videos/Venom The Last Dance (2024).mkv",
-  },
+    "videoUrl": "./videos/Venom The Last Dance (2024).mkv"},
   {
     "id": 27,
     "title": "Without Remorse",
@@ -361,8 +335,7 @@
     "cast": ["Michael B. Jordan", "Jamie Bell"],
     "director": "Stefano Sollima",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/6GCOpT8QcNzup09TAMmvvk22LTR.jpg",
-    "videoUrl": "./videos/Without.Remorse..2021..mkv",
-  },
+    "videoUrl": "./videos/Without.Remorse..2021..mkv"},
   {
     "id": 28,
     "title": "The Super Mario Bros. Movie",
@@ -374,8 +347,7 @@
     "cast": ["Chris Pratt", "Charlie Day", "Anya Taylor-Joy"],
     "director": "Aaron Horvath, Michael Jelenic",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg",
-    "videoUrl": "./videos/The Super Mario Bros. Movie (20233) (NetNai....mkv",
-  },
+    "videoUrl": "./videos/The Super Mario Bros. Movie (20233) (NetNai....mkv"},
   {
     "id": 29,
     "title": "Back in Action",
@@ -387,6 +359,5 @@
     "cast": ["Cameron Diaz", "Jamie Foxx"],
     "director": "Seth Gordon",
     "poster": "https://media.themoviedb.org/t/p/w300_and_h450_face/3L3l6LsiLGHkTG4RFB2aBA6BttB.jpg",
-    "videoUrl": "./videos/Back.in.Action.mkv",
-  }
+    "videoUrl": "./videos/Back.in.Action.mkv"}
 ]
