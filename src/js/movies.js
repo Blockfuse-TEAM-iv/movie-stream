@@ -21,7 +21,7 @@ export async function initMovieDetails() {
   }
 
   try {
-    const response = await fetch('../data/movies.json');
+    const response = await fetch(`../data/movies.json?t=${Date.now()}`);
     if (!response.ok) throw new Error('Failed to fetch movies');
 
     const movies = await response.json();
@@ -60,9 +60,7 @@ function renderMovieDetails(movie) {
   if (!container) return;
 
   const progress = getWatchProgress(movie.id);
-  // Normalise TMDB URL to avoid redirect: media.themoviedb.org → image.tmdb.org
-  const rawBackdrop = movie.backdrop || movie.poster;
-  const backdropUrl = rawBackdrop.replace('media.themoviedb.org', 'image.tmdb.org');
+  const backdropUrl = movie.backdrop || movie.poster;
   const videoUrl = movie.videoUrl || PREVIEW_FALLBACK;
 
   // Circumference of the SVG progress ring (r=26 → 2πr ≈ 163.4)
@@ -78,10 +76,10 @@ function renderMovieDetails(movie) {
     <!-- ═══ HERO BACKDROP ═══════════════════════════════════════════════ -->
     <div class="relative w-full" style="height: 560px;">
       <!-- Background Image -->
-      <div class="absolute inset-0 overflow-hidden bg-slate-900">
-        <img src="${backdropUrl}" alt="${movie.title} backdrop"
+      <div class="absolute inset-0 overflow-hidden">
+        <img src="${backdropUrl.replace('media.themoviedb.org', 'image.tmdb.org')}" alt="${movie.title} backdrop"
              class="w-full h-full object-cover object-top"
-             onerror="this.style.opacity='0'">
+             onerror="this.style.display='none'">
         <!-- Gradient overlays — left side darker for text legibility, rest subtle -->
         <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30"></div>
@@ -96,7 +94,7 @@ function renderMovieDetails(movie) {
           <div class="relative w-full rounded-xl overflow-hidden shadow-2xl border border-white/10 aspect-[2/3]">
 
             <!-- Poster Image (fades out on hover to reveal preview) -->
-            <img src="${movie.poster}" alt="${movie.title}"
+            <img src="${movie.poster.replace('media.themoviedb.org', 'image.tmdb.org')}" alt="${movie.title}"
                  id="poster-img"
                  class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover/poster:opacity-0 z-10">
 
@@ -200,6 +198,8 @@ function renderMovieDetails(movie) {
         </div>
       </div>
     </div>
+    <!-- Bottom Spacer to prevent Footer overlap -->
+    <div class="h-32"></div>
   `;
 
   // Initialise hover preview after DOM update
@@ -254,6 +254,9 @@ function initPlayerModal(movie) {
     // Hide the big play overlay immediately so the video is visible
     const overlay = document.getElementById('play-overlay');
     if (overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
+
+    const titleEl = document.getElementById('modal-movie-title');
+    if (titleEl) titleEl.textContent = `Watching: ${movie.title}`;
 
     video.play().catch(() => {});
     updatePlayIcons(true);
@@ -330,6 +333,7 @@ function initPlayerControls(movieId) {
     if (video.paused) {
       video.play();
       if (playOverlay) {
+        playOverlay.classList.remove('opacity-100');
         playOverlay.classList.add('opacity-0', 'pointer-events-none');
       }
       updatePlayIcons(true);
@@ -337,34 +341,35 @@ function initPlayerControls(movieId) {
       video.pause();
       if (playOverlay) {
         playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        playOverlay.classList.add('opacity-100');
       }
       updatePlayIcons(false);
     }
   };
 
-  // Guard against double-binding when modal is opened multiple times
-  if (video._controlsInitialised) {
-    // Just ensure overlay is hidden and icons are correct
-    const ov = document.getElementById('play-overlay');
-    if (ov) ov.classList.add('opacity-0', 'pointer-events-none');
-    updatePlayIcons(!video.paused);
-    return;
-  }
-  video._controlsInitialised = true;
-
-  // Auto-hide overlay using live DOM queries (avoids stale reference issues)
+  // Auto-hide overlay when video actually starts playing (handles autoplay)
   video.addEventListener('playing', () => {
-    const ov = document.getElementById('play-overlay');
-    if (ov) ov.classList.add('opacity-0', 'pointer-events-none');
+    if (playOverlay) {
+      playOverlay.classList.remove('opacity-100');
+      playOverlay.classList.add('opacity-0', 'pointer-events-none');
+    }
     updatePlayIcons(true);
   });
   video.addEventListener('pause', () => {
-    const ov = document.getElementById('play-overlay');
-    if (ov) ov.classList.remove('opacity-0', 'pointer-events-none');
+    if (playOverlay) {
+      playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      playOverlay.classList.add('opacity-100');
+    }
     updatePlayIcons(false);
   });
 
-  // Click handlers — also use live queries to prevent stale references
+  // Avoid double-binding — clone buttons to strip old listeners
+  [playOverlay, playPauseBtn].forEach(el => {
+    if (!el) return;
+    const clone = el.cloneNode(true);
+    el.parentNode.replaceChild(clone, el);
+  });
+
   document.getElementById('play-overlay')?.addEventListener('click', togglePlay);
   document.getElementById('play-pause-btn')?.addEventListener('click', togglePlay);
   video.addEventListener('click', togglePlay);
@@ -419,8 +424,15 @@ function initPlayerControls(movieId) {
   const fsBtn = document.getElementById('fullscreen-btn');
   if (fsBtn && videoContainer) {
     fsBtn.addEventListener('click', () => {
-      if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
-      else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
+      if (!document.fullscreenElement) {
+        if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
+        else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
+        else if (videoContainer.msRequestFullscreen) videoContainer.msRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+      }
     });
   }
 
@@ -499,11 +511,11 @@ function updateVolumeIcon(isMuted) {
   const btn = document.getElementById('mute-btn');
   if (!btn) return;
   btn.innerHTML = isMuted
-    ? `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    ? `<svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
         <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
       </svg>`
-    : `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    : `<svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
         <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657a8 8 0 000-9.314M15.536 14.536a5 5 0 000-5.072" />
       </svg>`;
@@ -512,18 +524,22 @@ function updateVolumeIcon(isMuted) {
 function updateProgressRing(pct) {
   const circumference = 163.4;
   const offset = circumference - (circumference * pct) / 100;
-  // Find the animated circle (second circle in the SVG ring)
-  const circles = document.querySelectorAll('#movie-content circle');
+  
+  // Target the ring elements inside the movie-content area
+  const mainContent = document.getElementById('movie-content');
+  if (!mainContent) return;
+
+  const circles = mainContent.querySelectorAll('circle');
   if (circles.length >= 2) {
     const arc = circles[1];
     arc.setAttribute('stroke-dashoffset', offset);
     arc.setAttribute('stroke', pct > 0 ? '#ef4444' : '#ffffff20');
   }
-  // Update the text label
-  const label = document.querySelector('#movie-content .absolute.inset-0.flex span');
+  
+  const label = mainContent.querySelector('.absolute.inset-0.flex span');
   if (label) label.textContent = pct > 0 ? `${pct}%` : '—';
-  // Update the "Watched / Not Started" text
-  const statusEl = document.querySelector('#movie-content .max-w-\\[60px\\]');
+  
+  const statusEl = mainContent.querySelector('.text-xs.text-slate-400');
   if (statusEl) statusEl.innerHTML = pct > 0 ? 'Watched' : 'Not<br>Started';
 }
 
@@ -539,7 +555,7 @@ function saveProgress(movieId, progress, currentTime) {
   user.watchProgress[movieId] = {
     pct: Math.round(progress),
     time: Math.floor(currentTime || 0),
-    ts: Date.now()
+    lastWatched: Date.now()
   };
   users[userIdx] = user;
   localStorage.setItem('movie_stream_users', JSON.stringify(users));
