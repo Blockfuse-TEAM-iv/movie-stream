@@ -6,40 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Movie Details - MovieStream</title>
   <link href="../styles/output.css" rel="stylesheet">
-  <script src="https://www.youtube.com/iframe_api"></script>
-
-  <style>
-    /* Poster Trailer Transition Styles */
-    #poster-card {
-      width: 320px;
-      height: 480px;
-      transition: width 500ms ease-in-out, height 500ms ease-in-out;
-      will-change: width, height;
-    }
-    
-    #poster-card.is-landscape {
-      width: 480px;
-      height: 270px;
-    }
-
-    #poster-card .poster-img-wrapper {
-      transition: opacity 300ms ease-in-out;
-    }
-
-    #poster-card.is-landscape .poster-img-wrapper {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Suppress YouTube UI flash */
-    .trailer-overlay {
-      position: absolute;
-      inset: 0;
-      background: #000;
-      z-index: 20;
-      transition: opacity 300ms ease;
-    }
-  </style>
 
   <script type="module">
     import { requireAuth } from '../js/router.js';
