@@ -7,26 +7,144 @@
   <link href="../styles/output.css" rel="stylesheet">
   <script type="module">
     import { requireAuth } from '../js/router.js';
-    import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
+    import { renderNavbar, renderFooter, applyTheme, showToast } from '../js/ui.js';
+    import { getCurrentUser } from '../js/auth.js';
     
+    // Protect page
     requireAuth();
+    // Apply theme
     applyTheme();
     
+    let allMovies = [];
+
     window.addEventListener('DOMContentLoaded', () => {
       renderNavbar();
       renderFooter();
+      loadWatchlist();
     });
+
+    /**
+     * Fetch all movies and filter by user's watchlist.
+     */
+    async function loadWatchlist() {
+      try {
+        const res = await fetch('../data/movies.json');
+        allMovies = await res.json();
+
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const watchlistIds = (user.watchlist || []).map(id => id.toString());
+        const filteredMovies = allMovies.filter(m => watchlistIds.includes(m.id.toString()));
+
+        renderWatchlist(filteredMovies);
+
+      } catch (err) {
+        console.error('Failed to load watchlist:', err);
+        document.getElementById('empty-state').classList.remove('hidden');
+      }
+    }
+
+    /**
+     * Renders movie cards or empty state.
+     */
+    function renderWatchlist(movies) {
+      const grid = document.getElementById('watchlist-grid');
+      const emptyState = document.getElementById('empty-state');
+
+      if (!movies || movies.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = movies.map(movie => `
+        <div class="group relative bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-red-600/50 hover:shadow-2xl hover:shadow-red-600/10 cursor-pointer">
+          <!-- Poster -->
+          <div class="aspect-[2/3] w-full overflow-hidden" onclick="window.location.href='movie.html?id=${movie.id}'">
+            <img src="${movie.poster}" alt="${movie.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          </div>
+
+          <!-- Remove Button (Top Right) -->
+          <button onclick="event.stopPropagation(); removeFromWatchlist(${movie.id})" 
+                  class="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md rounded-full text-white/70 hover:text-red-500 hover:bg-black/80 transition-all border border-white/10 opacity-0 group-hover:opacity-100">
+            <svg class="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div class="p-4" onclick="window.location.href='movie.html?id=${movie.id}'">
+            <h3 class="text-sm font-bold text-white mb-1 line-clamp-1">${movie.title}</h3>
+            <div class="flex items-center gap-2 text-xs text-slate-400">
+              <span class="text-red-500 font-bold">★ ${movie.rating}</span>
+              <span>•</span>
+              <span>${movie.year}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * Removes a movie from the watchlist and re-renders.
+     */
+    window.removeFromWatchlist = function(movieId) {
+      const session = JSON.parse(localStorage.getItem('movie_stream_session'));
+      if (!session) return;
+
+      const users = JSON.parse(localStorage.getItem('movie_stream_users') || '[]');
+      const userIdx = users.findIndex(u => u.id === session.userId);
+      if (userIdx === -1) return;
+
+      const user = users[userIdx];
+      user.watchlist = (user.watchlist || []).filter(id => id.toString() !== movieId.toString());
+      
+      users[userIdx] = user;
+      localStorage.setItem('movie_stream_users', JSON.stringify(users));
+
+      showToast('Removed from watchlist');
+      loadWatchlist();
+    };
+
   </script>
 </head>
 <body class="bg-black text-slate-200 min-h-screen flex flex-col">
+  <!-- Navbar -->
   <div id="navbar"></div>
+
+  <!-- Toast -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
   
-  <main class="p-8 pt-24 flex-grow">
-    <h1 class="text-3xl font-bold">My Watchlist</h1>
-    <p class="text-slate-400 mt-2">Your collection of movies to watch.</p>
+  <main class="flex-grow pt-24 px-[4%] pb-20">
+    <div class="mb-10">
+      <h1 class="text-3xl font-black text-white uppercase tracking-tight">My Watchlist</h1>
+      <p class="text-slate-500 mt-1">Manage your saved movies and series.</p>
+    </div>
+
+    <!-- Movie Grid -->
+    <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-32 space-y-6">
+      <div class="flex justify-center">
+        <div class="w-20 h-20 bg-slate-900/50 rounded-full flex items-center justify-center border border-white/5">
+          <svg class="w-10 h-10 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-white">Your watchlist is empty</h2>
+        <p class="text-slate-500 mt-2 max-w-xs mx-auto">Explore our collection and add some movies to your list!</p>
+      </div>
+      <a href="home.html" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-red-600/20">
+        Browse Movies
+      </a>
+    </div>
   </main>
 
+  <!-- Footer -->
   <div id="footer"></div>
 </body>
 </html>

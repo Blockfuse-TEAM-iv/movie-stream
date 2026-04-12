@@ -8,9 +8,12 @@
 
   <script type="module">
     import { requireAuth } from '../js/router.js';
-    import { renderNavbar, renderFooter, applyTheme } from '../js/ui.js';
-
+    import { renderNavbar, renderFooter, applyTheme, showToast } from '../js/ui.js';
+    import { getCurrentUser } from '../js/auth.js';
+    
+    // Protect page
     requireAuth();
+    // Apply theme
     applyTheme();
 
     let allMovies = [];
@@ -27,10 +30,11 @@
     // ===============================
     async function loadMovies() {
       try {
-        const res = await fetch('../data/movies.json');
+        const res = await fetch(`../data/movies.json?t=${Date.now()}`);
         allMovies = await res.json();
 
         renderMovies(allMovies);
+        renderContinueWatching();
 
       } catch (err) {
         console.error('Failed to load movies:', err);
@@ -39,11 +43,91 @@
     }
 
     // ===============================
+    // CONTINUE WATCHING
+    // ===============================
+    function renderContinueWatching() {
+      const user = getCurrentUser();
+      if (!user || !user.watchProgress) return;
+
+      const section = document.getElementById('continue-watching-section');
+      const row = document.getElementById('continue-watching-row');
+      
+      const inProgressIds = Object.keys(user.watchProgress).filter(id => {
+        const entry = user.watchProgress[id];
+        const pct = typeof entry === 'object' ? (entry.pct || 0) : (entry || 0);
+        return pct > 5 && pct < 95;
+      });
+
+      if (inProgressIds.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      // Sort by lastWatched (most recent first)
+      inProgressIds.sort((a, b) => {
+        const entryA = user.watchProgress[a];
+        const entryB = user.watchProgress[b];
+        const timeA = typeof entryA === 'object' ? (entryA.lastWatched || 0) : 0;
+        const timeB = typeof entryB === 'object' ? (entryB.lastWatched || 0) : 0;
+        return timeB - timeA;
+      });
+
+      section.classList.remove('hidden');
+      
+      // Map and Filter to ensure only existing movies are rendered
+      const inProgressMovies = inProgressIds
+        .map(id => allMovies.find(m => m.id.toString() === id))
+        .filter(m => m !== undefined);
+
+      if (inProgressMovies.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+      
+      row.innerHTML = inProgressMovies.map(movie => {
+        const entry = user.watchProgress[movie.id];
+        const pct = typeof entry === 'object' ? (entry.pct || 0) : (entry || 0);
+        return `
+          <div class="min-w-[200px] md:min-w-[240px] group relative bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden transition-all hover:border-red-600/30 cursor-pointer"
+               onclick="window.location.href='movie.html?id=${movie.id}'">
+            
+            <!-- Poster -->
+            <div class="aspect-video w-full overflow-hidden relative">
+              <img src="${movie.poster}" alt="${movie.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+              
+              <!-- Progress Bar Overlay -->
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+                <div class="h-full bg-red-600" style="width: ${pct}%"></div>
+              </div>
+
+              <!-- Play Icon Overlay -->
+              <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white fill-current ml-0.5" viewBox="0 0 20 20">
+                    <path d="M5 4v12l10-6z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-3">
+              <h3 class="text-sm font-bold text-white line-clamp-1">${movie.title}</h3>
+              <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-semibold">${pct}% Complete</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===============================
     // RENDER MOVIES
     // ===============================
     function renderMovies(movies) {
       const movieGrid = document.getElementById('movie-grid');
       const emptyState = document.getElementById('empty-state');
+      const user = getCurrentUser();
+      const watchlist = user?.watchlist || [];
 
       if (!movies || movies.length === 0) {
         movieGrid.innerHTML = '';
@@ -53,44 +137,100 @@
 
       emptyState.classList.add('hidden');
 
-      movieGrid.innerHTML = movies.map(movie => `
-        <div class="movie-card bg-slate-900/50 border border-white/5 rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-red-600/50 hover:shadow-2xl hover:shadow-red-600/10 cursor-pointer flex flex-col h-full" 
-             onclick="window.location.href='movie.html?id=${movie.id}'">
-          
-          <!-- Poster -->
-          <div class="aspect-[2/3] w-full overflow-hidden">
-            <img src="${movie.poster}" alt="${movie.title}" 
-                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-          </div>
+      movieGrid.innerHTML = movies.map(movie => {
+        const isFavorite = watchlist.includes(movie.id);
+        return `
+          <div class="movie-card group relative bg-slate-900/50 border border-white/5 rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-red-600/50 hover:shadow-2xl hover:shadow-red-600/10 cursor-pointer flex flex-col h-full">
+            
+            <!-- Favourite Button -->
+            <button onclick="event.stopPropagation(); toggleFavorite(${movie.id})" 
+                    class="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 hover:bg-black/80 transition-all group/fav">
+              <svg id="fav-icon-${movie.id}" class="w-4 h-4 transition-colors ${isFavorite ? 'text-red-500 fill-red-500' : 'text-white/70 fill-none group-hover/fav:text-red-400'}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
 
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div>
-              <!-- Title -->
-              <h3 class="text-sm font-bold text-white mb-1 line-clamp-1">
-                ${movie.title}
-              </h3>
+            <!-- Poster -->
+            <div class="aspect-[2/3] w-full overflow-hidden" onclick="window.location.href='movie.html?id=${movie.id}'">
+              <img src="${movie.poster}" alt="${movie.title}" 
+                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            </div>
 
-              <!-- Rating & Year -->
-              <div class="flex items-center gap-2 text-xs text-slate-400 mb-3">
-                <span class="text-red-500 font-bold">★ ${movie.rating}</span>
-                <span>•</span>
-                <span>${movie.year}</span>
+            <div class="p-4 flex-grow flex flex-col justify-between" onclick="window.location.href='movie.html?id=${movie.id}'">
+              <div>
+                <!-- Title -->
+                <h3 class="text-sm font-bold text-white mb-1 line-clamp-1">${movie.title}</h3>
+
+                <!-- Rating & Year -->
+                <div class="flex items-center gap-2 text-xs text-slate-400 mb-3">
+                  <span class="text-red-500 font-bold">★ ${movie.rating}</span>
+                  <span>•</span>
+                  <span>${movie.year}</span>
+                </div>
+              </div>
+
+              <!-- Genres -->
+              <div class="flex flex-wrap gap-1.5">
+                ${movie.genre.map(g => `
+                  <span class="text-[10px] uppercase tracking-wider font-bold bg-red-600/10 text-red-500 border border-red-600/20 px-2 py-0.5 rounded">
+                    ${g}
+                  </span>
+                `).join('')}
               </div>
             </div>
 
-            <!-- Genres -->
-            <div class="flex flex-wrap gap-1.5">
-              ${movie.genre.map(g => `
-                <span class="text-[10px] uppercase tracking-wider font-bold bg-red-600/10 text-red-500 border border-red-600/20 px-2 py-0.5 rounded">
-                  ${g}
-                </span>
-              `).join('')}
-            </div>
           </div>
-
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
+
+    // ===============================
+    // TOGGLE WATCHLIST (FAVOURITE)
+    // ===============================
+    // ===============================
+    // TOGGLE WATCHLIST (FAVOURITE)
+    // ===============================
+    window.toggleFavorite = function(movieId) {
+      console.log('Toggling favorite for movie:', movieId);
+      const session = JSON.parse(localStorage.getItem('movie_stream_session'));
+      if (!session) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('movie_stream_users') || '[]');
+      const userIdx = users.findIndex(u => u.id === session.userId);
+      if (userIdx === -1) return;
+
+      const user = users[userIdx];
+      if (!user.watchlist) user.watchlist = [];
+
+      // Ensure comparison is robust
+      const movieIdx = user.watchlist.findIndex(id => id.toString() === movieId.toString());
+      const icon = document.getElementById(`fav-icon-${movieId}`);
+      
+      if (movieIdx === -1) {
+        user.watchlist.push(movieId);
+        showToast('Added to watchlist');
+        if (icon) {
+          icon.classList.add('text-red-500', 'fill-red-500');
+          icon.classList.remove('text-white/70', 'fill-none');
+        }
+      } else {
+        user.watchlist.splice(movieIdx, 1);
+        showToast('Removed from watchlist');
+        if (icon) {
+          icon.classList.remove('text-red-500', 'fill-red-500');
+          icon.classList.add('text-white/70', 'fill-none');
+        }
+      }
+
+      // Persist
+      users[userIdx] = user;
+      localStorage.setItem('movie_stream_users', JSON.stringify(users));
+      
+      // Update session user if needed (though auth.js usually reads from users list)
+    };
 
     // ===============================
     // FILTERS (SEARCH + GENRE)
@@ -98,6 +238,9 @@
     function setupFilters() {
       const searchInput = document.getElementById('movie-search');
       const genreButtons = document.querySelectorAll('.genre-btn');
+
+      const activeClasses = ['bg-red-600', 'text-white', 'hover:bg-red-700'];
+      const inactiveClasses = ['bg-slate-900', 'text-slate-400', 'hover:bg-slate-800'];
 
       let activeGenre = "All";
 
@@ -109,15 +252,15 @@
       // GENRE CLICK
       genreButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-
-          // UI active state
+          // Reset all buttons to inactive
           genreButtons.forEach(b => {
-            b.classList.remove('bg-red-600', 'text-white');
-            b.classList.add('bg-slate-900', 'text-slate-400');
+            b.classList.remove(...activeClasses);
+            b.classList.add(...inactiveClasses);
           });
 
-          btn.classList.add('bg-red-600', 'text-white');
-          btn.classList.remove('bg-slate-900', 'text-slate-400');
+          // Set clicked button to active
+          btn.classList.add(...activeClasses);
+          btn.classList.remove(...inactiveClasses);
 
           activeGenre = btn.textContent.trim();
           applyFilters(searchInput.value, activeGenre);
@@ -164,7 +307,24 @@
     <!-- Continue Watching -->
     <section id="continue-watching-section" class="hidden px-[4%]">
       <h2 class="text-xl font-bold mb-4">Continue Watching</h2>
-      <div id="continue-watching-row" class="flex gap-4 overflow-x-auto no-scrollbar pb-4"></div>
+      <div class="relative group/cv">
+        <!-- Left Chevron -->
+        <button id="cv-scroll-left" class="absolute left-0 top-0 bottom-0 pr-6 pl-2 bg-gradient-to-r from-black via-black/80 to-transparent z-10 opacity-0 group-hover/cv:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white disabled:opacity-0 disabled:pointer-events-none">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <!-- The Row -->
+        <div id="continue-watching-row" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 scroll-smooth"></div>
+
+        <!-- Right Chevron -->
+        <button id="cv-scroll-right" class="absolute right-0 top-0 bottom-0 pl-6 pr-2 bg-gradient-to-l from-black via-black/80 to-transparent z-10 opacity-0 group-hover/cv:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white disabled:opacity-0 disabled:pointer-events-none">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </section>
 
     <!-- Search + Genre -->
@@ -175,16 +335,108 @@
         <input id="movie-search" type="text" placeholder="Search movies..." 
           class="bg-slate-900/50 border border-white/5 px-4 py-2 rounded-xl focus:border-red-600 outline-none w-full md:w-80 transition-all">
 
-        <!-- Genres -->
-        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 w-full md:w-auto">
-          <button class="genre-btn bg-red-600 text-white px-4 py-1 rounded-full text-sm font-medium transition-all">All</button>
-          <button class="genre-btn bg-slate-900 text-slate-400 px-4 py-1 rounded-full text-sm font-medium hover:bg-slate-800 transition-all">Action</button>
-          <button class="genre-btn bg-slate-900 text-slate-400 px-4 py-1 rounded-full text-sm font-medium hover:bg-slate-800 transition-all">Sci-Fi</button>
-          <button class="genre-btn bg-slate-900 text-slate-400 px-4 py-1 rounded-full text-sm font-medium hover:bg-slate-800 transition-all">Drama</button>
+        <!-- Genres Container -->
+        <div class="relative w-full md:max-w-md lg:max-w-xl overflow-hidden group/filters">
+          
+          <!-- Left Chevron -->
+          <button id="scroll-left" class="absolute left-0 top-0 bottom-0 pr-4 pl-2 bg-gradient-to-r from-black via-black/80 to-transparent z-10 opacity-0 group-hover/filters:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <!-- Genre Buttons -->
+          <div class="flex gap-2 overflow-x-auto pb-4 -mb-4 px-2 no-scrollbar scroll-smooth" id="genre-scroll-container">
+            <button class="genre-btn shrink-0 bg-red-600 text-white hover:bg-red-700 px-4 py-1 rounded-full text-sm font-medium transition-all">All</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Action</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Sci-Fi</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Drama</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Thriller</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Comedy</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Horror</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Fantasy</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Animation</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Adventure</button>
+            <button class="genre-btn shrink-0 bg-slate-900 text-slate-400 hover:bg-slate-800 px-4 py-1 rounded-full text-sm font-medium transition-all">Mystery</button>
+          </div>
+
+          <!-- Right Chevron -->
+          <button id="scroll-right" class="absolute right-0 top-0 bottom-0 pl-4 pr-2 bg-gradient-to-l from-black via-black/80 to-transparent z-10 opacity-0 group-hover/filters:opacity-100 transition-opacity flex items-center text-slate-400 hover:text-white">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
 
       </div>
     </section>
+
+    <!-- Script to handle scroll button visibility and logic -->
+    <script>
+      const container = document.getElementById('genre-scroll-container');
+      const btnRight = document.getElementById('scroll-right');
+      const btnLeft = document.getElementById('scroll-left');
+
+      if (container && btnRight && btnLeft) {
+        const updateArrows = () => {
+          const { scrollLeft, scrollWidth, clientWidth } = container;
+          btnLeft.style.opacity = scrollLeft > 10 ? '1' : '0';
+          btnLeft.style.pointerEvents = scrollLeft > 10 ? 'auto' : 'none';
+          
+          btnRight.style.opacity = scrollLeft < (scrollWidth - clientWidth - 10) ? '1' : '0';
+          btnRight.style.pointerEvents = scrollLeft < (scrollWidth - clientWidth - 10) ? 'auto' : 'none';
+        };
+
+        container.addEventListener('scroll', updateArrows);
+        window.addEventListener('resize', updateArrows);
+
+        btnRight.addEventListener('click', () => {
+          container.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+
+        btnLeft.addEventListener('click', () => {
+          container.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+
+        // Initial check
+        setTimeout(updateArrows, 200);
+      }
+
+      // ===============================
+      // CONTINUE WATCHING SCROLL
+      // ===============================
+      const cvContainer = document.getElementById('continue-watching-row');
+      const cvBtnRight = document.getElementById('cv-scroll-right');
+      const cvBtnLeft = document.getElementById('cv-scroll-left');
+
+      if (cvContainer && cvBtnRight && cvBtnLeft) {
+        const updateCvArrows = () => {
+          const { scrollLeft, scrollWidth, clientWidth } = cvContainer;
+          cvBtnLeft.style.opacity = scrollLeft > 10 ? '1' : '0';
+          cvBtnLeft.style.pointerEvents = scrollLeft > 10 ? 'auto' : 'none';
+          
+          cvBtnRight.style.opacity = scrollLeft < (scrollWidth - clientWidth - 10) ? '1' : '0';
+          cvBtnRight.style.pointerEvents = scrollLeft < (scrollWidth - clientWidth - 10) ? 'auto' : 'none';
+        };
+
+        cvContainer.addEventListener('scroll', updateCvArrows);
+        window.addEventListener('resize', updateCvArrows);
+
+        cvBtnRight.addEventListener('click', () => {
+          cvContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+
+        cvBtnLeft.addEventListener('click', () => {
+          cvContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        // Trigger check when content might change
+        const observer = new MutationObserver(updateCvArrows);
+        observer.observe(cvContainer, { childList: true });
+
+        setTimeout(updateCvArrows, 500);
+      }
+    </script>
 
     <!-- Movies -->
     <section class="px-[4%] pb-20">
